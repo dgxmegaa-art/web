@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>امتحان الحاسب الآلي - 2024</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --error-color: #c0392b;
+            --bg-color: #f5f6fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 20px;
+        }
+
+        h1 { color: var(--primary-color); }
+        
+        .exam-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .question-image {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            border: 2px dashed #ccc;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .image-placeholder {
+            background-color: #eee;
+            color: #555;
+            text-align: center;
+            padding: 40px;
+            border: 2px dashed #999;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .options label:hover {
+            background: #e9ecef;
+        }
+
+        input[type="radio"] {
+            margin-left: 10px;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f6f3;
+            border-right: 4px solid var(--success-color);
+            font-size: 0.9em;
+        }
+
+        .correct-answer-text {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .wrong-answer-text {
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
+        #submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #submit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        #result-area {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>امتحان الحاسب الآلي (عام 2023-2024)</h1>
+        <p>جامعة الإسكندرية - كلية الزراعة (سابا باشا)</p>
+        <p><strong>تعليمات:</strong> اختر الإجابة الصحيحة ثم اضغط على زر "إنهاء الامتحان" في الأسفل لمعرفة النتيجة والتفسير.</p>
+    </header>
+
+    <form id="quiz-form">
+        
+        <div class="exam-section">
+            <h2>الجزء الأول: أسئلة شريط أدوات Word (Insert Tab)</h2>
+            <div class="image-placeholder">
+                <p>📷 <strong>مكان الصورة 1:</strong> يرجى وضع صورة شريط أدوات Word هنا (من صفحة 1 بالملف).</p>
+                <small>تأكد من تسمية الصورة <code>word_ribbon.png</code> لظهورها تلقائياً إذا قمت بإضافتها.</small>
+                </div>
+
+            <div id="section1-questions"></div>
+        </div>
+
+        <div class="exam-section">
+            <h2>الجزء الثاني: أسئلة Outlook</h2>
+            <div class="image-placeholder">
+                <p>📷 <strong>مكان الصورة 2:</strong> يرجى وضع صورة البريد الإلكتروني هنا (من صفحة 2 بالملف).</p>
+                </div>
+            <div id="section2-questions"></div>
+        </div>
+
+        <div class="exam-section">
+            <h2>الجزء الثالث: أسئلة عامة (Word & Windows)</h2>
+            <div id="section3-questions"></div>
+        </div>
+
+        <div class="exam-section">
+            <h2>الجزء الرابع: تخطيط الصفحة (Page Layout)</h2>
+            <div class="image-placeholder">
+                <p>📷 <strong>مكان الصورة 3:</strong> يرجى وضع صورة شريط Page Layout هنا (من صفحة 2-3 بالملف).</p>
+                </div>
+            <div id="section4-questions"></div>
+        </div>
+
+        <div class="exam-section">
+            <h2>الجزء الخامس: أسئلة Excel والمعادلات</h2>
+            <div class="image-placeholder">
+                <p>📷 <strong>مكان الصورة 4:</strong> يرجى وضع صورة واجهة Excel هنا (من صفحة 4 بالملف).</p>
+                </div>
+            <div id="section5-questions"></div>
+        </div>
+
+        <div class="exam-section">
+            <h2>الجزء السادس: ضع علامة (صح) أو (خطأ)</h2>
+            <div id="section6-questions"></div>
+        </div>
+
+        <button type="button" id="submit-btn" onclick="submitQuiz()">إنهاء الامتحان وعرض النتيجة</button>
+    </form>
+
+    <div id="result-area">
+        <h2>نتيجتك: <span id="score">0</span> / <span id="total">0</span></h2>
+        <p id="grade-message"></p>
+    </div>
+</div>
+
+<script>
+    // قاعدة بيانات الأسئلة
+    const questions = [
+        // --- Word Ribbon Questions ---
+        {
+            id: 71, section: "section1-questions",
+            text: "71- يمكن إدراج معادلات رياضية (Equations) عند الضغط على أيقونة السهم رقم:",
+            options: ["16", "12", "13", "15"],
+            correctIndex: 0,
+            explanation: "السهم 16 يشير إلى رمز π (Equation) وهو المخصص لإدراج المعادلات الرياضية."
+        },
+        {
+            id: 72, section: "section1-questions",
+            text: "72- يمكن إدراج موقع على الانترنت (Hyperlink) عند الضغط على أيقونة السهم رقم:",
+            options: ["11", "12", "13", "15"],
+            correctIndex: 0,
+            explanation: "السهم 11 يشير إلى رمز الكرة الأرضية (Hyperlink) لربط النصوص بروابط خارجية."
+        },
+        {
+            id: 73, section: "section1-questions",
+            text: "73- يمكن إدراج أرقام الصفحات عند الضغط على أيقونة السهم رقم:",
+            options: ["16", "14", "15", "10"],
+            correctIndex: 1,
+            explanation: "السهم 14 يشير إلى 'Page Number' في مجموعة Header & Footer."
+        },
+        {
+            id: 74, section: "section1-questions",
+            text: "74- يمكن إدراج رسم بياني (Chart) عند الضغط على أيقونة السهم رقم:",
+            options: ["7", "17", "18", "15"],
+            correctIndex: 0,
+            explanation: "السهم 7 في الصورة يشير إلى أيقونة Chart (الرسم البياني)."
+        },
+        {
+            id: 75, section: "section1-questions",
+            text: "75- يمكن إدراج الرموز (Symbols) عند الضغط على أيقونة السهم رقم:",
+            options: ["16", "17", "18", "19"],
+            correctIndex: 1,
+            explanation: "السهم 17 يشير إلى رمز Ω (Symbol) لإدراج الرموز الخاصة."
+        },
+        {
+            id: 76, section: "section1-questions",
+            text: "76- يمكن إدراج أغلفة للتقارير (Cover Page) عند الضغط على أيقونة السهم رقم:",
+            options: ["16", "7", "8", "1"],
+            correctIndex: 3,
+            explanation: "السهم 1 في أقصى اليسار يشير إلى Cover Page."
+        },
+        {
+            id: 77, section: "section1-questions",
+            text: "77- يمكن إدراج جدول مكون من 3 أعمدة و 4 صفوف عند الضغط على أيقونة السهم رقم:",
+            options: ["6", "4", "3", "15"],
+            correctIndex: 1,
+            explanation: "السهم 4 يشير إلى Table (جدول)."
+        },
+        {
+            id: 78, section: "section1-questions",
+            text: "78- يمكن إدراج صورة (Picture) عند الضغط على أيقونة السهم رقم:",
+            options: ["6", "7", "5", "15"],
+            correctIndex: 2,
+            explanation: "السهم 5 يشير إلى أيقونة Picture."
+        },
+        {
+            id: 79, section: "section1-questions",
+            text: "79- يمكن إدراج فواصل بين الصفحات (Page Break) عند الضغط على أيقونة السهم رقم:",
+            options: ["6", "3", "8", "15"],
+            correctIndex: 1,
+            explanation: "السهم 3 يشير إلى Page Break."
+        },
+        {
+            id: 81, section: "section1-questions",
+            text: "81- يمكن كتابة عنوان في الهامش العلوي لكل الصفحات (Header) عند الضغط على أيقونة السهم رقم:",
+            options: ["12", "7", "6", "15"],
+            correctIndex: 0,
+            explanation: "السهم 12 يشير إلى Header."
+        },
+        {
+            id: 82, section: "section1-questions",
+            text: "82- يمكن كتابة عنوان في الهامش السفلي لكل الصفحات (Footer) عند الضغط على أيقونة السهم رقم:",
+            options: ["13", "12", "18", "14"],
+            correctIndex: 0,
+            explanation: "السهم 13 يشير إلى Footer."
+        },
+        {
+            id: 83, section: "section1-questions",
+            text: "83- يمكن إدراج الوقت والتاريخ عند الضغط على أيقونة السهم رقم:",
+            options: ["12", "17", "18", "14"],
+            correctIndex: 2,
+            explanation: "السهم 18 يشير إلى Date & Time."
+        },
+        {
+            id: 85, section: "section1-questions",
+            text: "85- يمكن إدراج مربع أو دائرة (Shapes) عند الضغط على أيقونة السهم رقم:",
+            options: ["6", "7", "8", "5"],
+            correctIndex: 0,
+            explanation: "السهم 6 يشير إلى Shapes (أشكال)."
+        },
+
+        // --- Outlook Questions ---
+        {
+            id: 86, section: "section2-questions",
+            text: "86- عدد الرسائل الواردة (Inbox) في الشكل:",
+            options: ["5210", "17", "188", "84"],
+            correctIndex: 0,
+            explanation: "الرقم بجوار Inbox هو 5210."
+        },
+        {
+            id: 87, section: "section2-questions",
+            text: "87- عدد الرسائل التي تم مسحها (Deleted Items) في الشكل:",
+            options: ["5210", "17", "188", "84"],
+            correctIndex: 3,
+            explanation: "الرقم بجوار Deleted Items هو 84."
+        },
+        {
+            id: 88, section: "section2-questions",
+            text: "88- عدد الرسائل التي تم إرسالها (Sent Items) في الشكل:",
+            options: ["5210", "17", "188", "84"],
+            correctIndex: 2,
+            explanation: "الرقم بجوار Sent Items هو 188."
+        },
+
+        // --- General Questions ---
+        {
+            id: 89, section: "section3-questions",
+            text: "89- عند الضغط على CTRL + C لملف وورد:",
+            options: ["يتم قص الملف", "يتم نسخ الملف", "يتم فتح ملف جديد", "يتم عمل غلاف"],
+            correctIndex: 1,
+            explanation: "CTRL+C هو اختصار عالمي للأمر Copy (نسخ)."
+        },
+        {
+            id: 90, section: "section3-questions",
+            text: "90- يستخدم شريط الصيغة (Formula Bar) في برنامج الأكسيل في:",
+            options: ["تحديد المستند", "تظهر عنوان الخلية", "كتابة المعادلات أو الدوال", "فتح ملف جديد"],
+            correctIndex: 2,
+            explanation: "شريط الصيغة مخصص لإظهار وتعديل محتوى الخلية والمعادلات."
+        },
+        {
+            id: 91, section: "section3-questions",
+            text: "91- عند الضغط على Wrap text في برنامج الأكسيل يمكن الكتابة في الخلية الواحدة:",
+            options: ["أكثر من سطر", "كلمة واحدة", "إدراج صورة", "جدول"],
+            correctIndex: 0,
+            explanation: "Wrap Text (التفاف النص) يسمح للنص بالنزول لسطر جديد داخل نفس الخلية."
+        },
+        {
+            id: 92, section: "section3-questions",
+            text: "92- عند الضغط على أيقونة WordArt يمكن إدراج:",
+            options: ["خطوط ملونة زاهية وتأثيرات", "غلاف للمستند", "فواصل", "جدول"],
+            correctIndex: 0,
+            explanation: "WordArt مخصص للنصوص المزخرفة."
+        },
+        {
+            id: 93, section: "section3-questions",
+            text: "93- يعتبر برنامج مايكروسوفت باوربوينت من البرامج البسيطة والفعالة في:",
+            options: ["إعداد العروض التفاعلية", "تجميل الملف", "تنسيق كتب", "رسم جداول"],
+            correctIndex: 0,
+            explanation: "الوظيفة الأساسية للباوربوينت هي العروض التقديمية (Presentations)."
+        },
+
+        // --- Page Layout Questions ---
+        {
+            id: 94, section: "section4-questions",
+            text: "94- يمكن إدراج علامة مائية (Watermark) عند الضغط على أيقونة السهم رقم:",
+            options: ["1", "5", "8", "2"],
+            correctIndex: 0,
+            explanation: "السهم 1 في تبويب Page Layout يشير إلى Watermark."
+        },
+        {
+            id: 95, section: "section4-questions",
+            text: "95- يمكن إدراج المسافات بين الأسطر (Spacing) عند الضغط على أيقونة السهم رقم:",
+            options: ["11", "5", "8", "2"],
+            correctIndex: 0,
+            explanation: "السهم 11 يشير إلى جزء Spacing في مجموعة Paragraph."
+        },
+        {
+            id: 96, section: "section4-questions",
+            text: "96- يمكن تغيير لون الورقة (Page Color) عند الضغط على أيقونة السهم رقم:",
+            options: ["2", "6", "8", "5"],
+            correctIndex: 0,
+            explanation: "السهم 2 يشير إلى Page Color."
+        },
+        {
+            id: 97, section: "section4-questions",
+            text: "97- يمكن تغيير الهوامش (Margins) عند الضغط على أيقونة السهم رقم:",
+            options: ["5", "11", "8", "2"],
+            correctIndex: 0,
+            explanation: "السهم 5 يشير إلى Margins."
+        },
+        {
+            id: 98, section: "section4-questions",
+            text: "98- يمكن تغيير حجم الورقة (Size) الضغط على أيقونة السهم رقم:",
+            options: ["7", "6", "8", "5"],
+            correctIndex: 0,
+            explanation: "السهم 7 يشير إلى Size."
+        },
+        {
+            id: 99, section: "section4-questions",
+            text: "99- يمكن إدراج أرقام الأسطر (Line Numbers) عند الضغط على أيقونة السهم رقم:",
+            options: ["8", "6", "7", "5"],
+            correctIndex: 0,
+            explanation: "السهم 8 يشير إلى Line Numbers."
+        },
+
+        // --- Excel Questions ---
+        {
+            id: 101, section: "section5-questions",
+            text: "101- السهم رقم 1 يشير إلى:",
+            options: ["الخانة الخاصة بكتابة المعادلة", "عنوان الخلية (Name Box)", "نوع المعادلة", "إدراج صف"],
+            correctIndex: 1,
+            explanation: "المربع A1 يسمى Name Box ويظهر عنوان الخلية الحالية."
+        },
+        {
+            id: 102, section: "section5-questions",
+            text: "102- السهم رقم 2 يشير إلى:",
+            options: ["الخانة الخاصة بكتابة المعادلة (Formula Bar)", "عنوان الخلية", "نوع المعادلة", "إزالة صف"],
+            correctIndex: 0,
+            explanation: "هذا هو شريط الصيغة."
+        },
+        {
+            id: 103, section: "section5-questions",
+            text: "103- أي من المعادلات التالية تمثل دالة countif بشكل صحيح؟",
+            options: ["=COUNTIF($B$2:$B$21, \">0\")", "=COUNTIF($B$2:$B$21 \">0\")", "=COUNTIF($B$2 $B$21, >0)", "=COUNTIF >0"],
+            correctIndex: 0,
+            explanation: "الصيغة الصحيحة هي (Range, Criteria) والشرط يجب أن يكون بين علامتي تنصيص."
+        },
+        {
+            id: 104, section: "section5-questions",
+            text: "104- أي من المعادلات التالية تمثل دالة Large بشكل صحيح؟",
+            options: ["=LARGE($B$2:$B$20, 4)", "=LARGE $B$2:$B$20 4", "=LARGE($B$2-$B$20, 4)", "LARGE(..)"],
+            correctIndex: 0,
+            explanation: "الصيغة الصحيحة: =LARGE(Array, k)."
+        },
+        {
+            id: 105, section: "section5-questions",
+            text: "105- أي من المعادلات التالية تمثل دالة Countblank؟",
+            options: ["=COUNTBLANK(D2:D21)", "=COUNTBLANK(D2 D21)", "=COUNTBLANK D2:D21", "=COUNTBLANK(D2+D21)"],
+            correctIndex: 0,
+            explanation: "Countblank تأخذ نطاقاً واحداً فقط."
+        },
+        {
+            id: 107, section: "section5-questions",
+            text: "107- في المعادلة: =IF(B2>=90,\"A+\", IF(B2>=80,\"B+\", IF(B2>=50,\"C+\", \"F\"))). الطالب الحاصل على 52 درجة يحصل على:",
+            options: ["A+", "B+", "C+", "F"],
+            correctIndex: 2,
+            explanation: "52 أكبر من 50 وأقل من 80، لذا يتحقق الشرط الثالث وتكون النتيجة C+."
+        },
+        {
+            id: 108, section: "section5-questions",
+            text: "108- في نفس المعادلة السابقة، الطالب الحاصل على 90 درجة يحصل على:",
+            options: ["A+", "B+", "C+", "F"],
+            correctIndex: 0,
+            explanation: "الشرط الأول (>=90) يتحقق، لذا النتيجة A+."
+        },
+
+        // --- True / False ---
+        {
+            id: 201, section: "section6-questions",
+            text: "1- من أهم برمجيات أنظمة التشغيل ويندوز أو أندرويد و Microsoft office.",
+            options: ["صح", "خطأ"],
+            correctIndex: 1,
+            explanation: "خطأ. ويندوز وأندرويد أنظمة تشغيل، لكن Office برنامج تطبيقي (Application)."
+        },
+        {
+            id: 202, section: "section6-questions",
+            text: "2- البرنامج هو مجموعة مرتبة من التعليمات مكتوبة بأحد لغات البرمجة.",
+            options: ["صح", "خطأ"],
+            correctIndex: 0,
+            explanation: "صح. هذا هو التعريف العلمي للبرنامج."
+        },
+        {
+            id: 203, section: "section6-questions",
+            text: "3- يستخدم القرص الصلب في تخزين المعلومات والبيانات بصورة مؤقتة لا دائمة.",
+            options: ["صح", "خطأ"],
+            correctIndex: 1,
+            explanation: "خطأ. القرص الصلب (Hard Disk) تخزينه دائم. الرام (RAM) هو المؤقت."
+        },
+        {
+            id: 204, section: "section6-questions",
+            text: "4- يفقد الرام (الذاكرة العشوائية) جميع المعلومات الموجودة داخلها عند عمل ريستارت أو غلق الجهاز.",
+            options: ["صح", "خطأ"],
+            correctIndex: 0,
+            explanation: "صح. لأنها ذاكرة متطايرة (Volatile)."
+        },
+        {
+            id: 205, section: "section6-questions",
+            text: "5- يستخدم السيرفر في تشغيل عدد كبير من الحاسبات الشخصية والتنسيق فيما بينهم.",
+            options: ["صح", "خطأ"],
+            correctIndex: 0,
+            explanation: "صح. هذه وظيفة الخادم."
+        },
+        {
+            id: 206, section: "section6-questions",
+            text: "6- لا يوجد فرق بين الضغط على Save و Save as في برنامج Word.",
+            options: ["صح", "خطأ"],
+            correctIndex: 1,
+            explanation: "خطأ. Save يحفظ التعديلات، Save as ينشئ نسخة جديدة."
+        },
+        {
+            id: 207, section: "section6-questions",
+            text: "7- يعتبر المعالج (Processor) هو العقل الرئيسي الذي يقوم بإدارة الكمبيوتر.",
+            options: ["صح", "خطأ"],
+            correctIndex: 0,
+            explanation: "صح. الـ CPU هو وحدة المعالجة المركزية."
+        },
+        {
+            id: 208, section: "section6-questions",
+            text: "8- عند النقر فوق CTRL + A يمكن تحديد أول سطر من المستند في برنامج word.",
+            options: ["صح", "خطأ"],
+            correctIndex: 1,
+            explanation: "خطأ. CTRL+A تحدد المستند بأكمله (Select All)."
+        }
+    ];
+
+    // دالة لتحميل الأسئلة في الصفحة
+    function loadQuiz() {
+        questions.forEach((q, index) => {
+            const container = document.getElementById(q.section);
+            
+            // إنشاء عنصر السؤال
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-block';
+            questionDiv.innerHTML = `
+                <div class="question-text">${q.text}</div>
+                <div class="options" id="options-${q.id}"></div>
+                <div class="explanation" id="explanation-${q.id}">
+                    <strong>التفسير:</strong> ${q.explanation}
+                </div>
+            `;
+
+            container.appendChild(questionDiv);
+
+            // إضافة الخيارات
+            const optionsContainer = document.getElementById(`options-${q.id}`);
+            q.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.innerHTML = `
+                    <input type="radio" name="q${q.id}" value="${optIndex}">
+                    ${opt}
+                `;
+                optionsContainer.appendChild(label);
+            });
+        });
+        
+        // تحديث العدد الكلي للدرجات
+        document.getElementById('total').innerText = questions.length;
+    }
+
+    // دالة حساب النتيجة
+    function submitQuiz() {
+        let score = 0;
+        let allAnswered = true; // يمكن تفعيل هذا للتحقق من الإجابة على الكل
+
+        questions.forEach(q => {
+            const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
+            const explanationDiv = document.getElementById(`explanation-${q.id}`);
+            const optionsDiv = document.getElementById(`options-${q.id}`);
+            
+            // إعادة ضبط الألوان
+            const labels = optionsDiv.getElementsByTagName('label');
+            for(let lbl of labels) {
+                lbl.style.backgroundColor = "#f8f9fa";
+                lbl.style.color = "#333";
+            }
+
+            // إظهار التفسير
+            explanationDiv.style.display = 'block';
+
+            if (selected) {
+                const answerIndex = parseInt(selected.value);
+                
+                // تمييز الإجابة الصحيحة باللون الأخضر
+                labels[q.correctIndex].style.backgroundColor = "#d4edda";
+                labels[q.correctIndex].style.border = "1px solid #c3e6cb";
+                
+                if (answerIndex === q.correctIndex) {
+                    score++;
+                    explanationDiv.innerHTML = `<span class="correct-answer-text">✅ إجابة صحيحة!</span> <br>` + explanationDiv.innerHTML;
+                } else {
+                    // تمييز الإجابة الخاطئة باللون الأحمر
+                    labels[answerIndex].style.backgroundColor = "#f8d7da";
+                    labels[answerIndex].style.border = "1px solid #f5c6cb";
+                    explanationDiv.innerHTML = `<span class="wrong-answer-text">❌ إجابة خاطئة. الإجابة الصحيحة هي: ${q.options[q.correctIndex]}</span> <br>` + explanationDiv.innerHTML;
+                }
+            } else {
+                // لم يتم اختيار إجابة
+                labels[q.correctIndex].style.backgroundColor = "#d4edda"; // إظهار الصحيحة
+                explanationDiv.innerHTML = `<span class="wrong-answer-text">⚠️ لم يتم الإجابة.</span> <br>` + explanationDiv.innerHTML;
+            }
+        });
+
+        // عرض النتيجة النهائية
+        const resultArea = document.getElementById('result-area');
+        const scoreSpan = document.getElementById('score');
+        const msgSpan = document.getElementById('grade-message');
+        
+        scoreSpan.innerText = score;
+        resultArea.style.display = 'block';
+        
+        const percentage = (score / questions.length) * 100;
+        if(percentage >= 85) msgSpan.innerText = "مستوى ممتاز! 🌟";
+        else if(percentage >= 65) msgSpan.innerText = "مستوى جيد جداً 👍";
+        else if(percentage >= 50) msgSpan.innerText = "مستوى مقبول، راجع الأخطاء. 📚";
+        else msgSpan.innerText = "تحتاج للمزيد من المذاكرة. ⚠️";
+
+        // Scroll to bottom
+        resultArea.scrollIntoView({behavior: "smooth"});
+    }
+
+    // تشغيل الدالة عند تحميل الصفحة
+    window.onload = loadQuiz;
+
+</script>
+
+</body>
+</html>
