@@ -3,449 +3,560 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امتحان الحاسب الآلي - تدريب</title>
+    <title>موقع امتحانات الحاسب الآلي</title>
+    <!-- استدعاء مكتبة Tailwind CSS للتصميم -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- استدعاء خط عربي جميل (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --correct-color: #27ae60;
-            --wrong-color: #c0392b;
-            --bg-color: #f4f6f7;
-            --text-color: #333;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
+            font-family: 'Cairo', sans-serif;
+            background-color: #f3f4f6;
         }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        h1 { margin: 0; color: var(--primary-color); }
-        h2 { color: var(--accent-color); font-size: 1.2rem; margin-top: 10px; }
-
-        .exam-section {
-            display: none; /* Hidden by default until selected */
-        }
-        
-        .exam-section.active {
-            display: block;
-        }
-
-        .nav-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .nav-btn {
-            padding: 10px 20px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .nav-btn:hover { background: #34495e; }
-
         .question-card {
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-right: 5px solid var(--accent-color);
+            transition: all 0.3s ease;
         }
-
-        .section-image {
-            width: 100%;
+        .question-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .explanation-box {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* تنسيق الصور */
+        img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
             margin-bottom: 15px;
-            border: 1px solid #ddd;
-        }
-
-        .question-text {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        .option-btn {
-            padding: 12px;
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: right;
-            transition: all 0.2s;
-            font-size: 1rem;
-        }
-
-        .option-btn:hover {
-            background: #e2e6ea;
-        }
-
-        /* Feedback Styles */
-        .option-btn.correct {
-            background-color: #d4edda;
-            border-color: var(--correct-color);
-            color: var(--correct-color);
-        }
-
-        .option-btn.wrong {
-            background-color: #f8d7da;
-            border-color: var(--wrong-color);
-            color: var(--wrong-color);
-        }
-
-        .explanation-box {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #e8f4fd;
-            border-radius: 8px;
-            border-right: 4px solid var(--accent-color);
-            display: none; /* Hidden by default */
-            font-size: 0.95rem;
-        }
-
-        .toggle-explain-btn {
-            background: none;
-            border: none;
-            color: var(--accent-color);
-            text-decoration: underline;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 0.9rem;
-        }
-
-        .finish-btn {
+            border: 2px dashed #cbd5e1;
+            min-height: 150px;
+            background: #f1f5f9;
             display: block;
-            width: 100%;
-            padding: 15px;
-            background: var(--correct-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            margin-top: 30px;
+            margin-left: auto;
+            margin-right: auto;
         }
-
-        .score-modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
+        /* تنسيق الخيارات المعطلة */
+        input:disabled + span {
+            color: #6b7280; /* لون رمادي للنص */
+            cursor: not-allowed;
+        }
+        label.disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .hidden-section {
             display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .score-content {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .score-number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin: 20px 0;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen pb-20">
 
-<div class="container">
-    <header>
-        <h1>بنك أسئلة الحاسب الآلي</h1>
-        <h2>اختر الامتحان للبدء</h2>
+    <!-- رأس الصفحة -->
+    <header class="bg-blue-800 text-white p-6 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl font-bold mb-2 md:mb-0">نظام الاختبارات الإلكتروني</h1>
+            <div class="text-sm opacity-90">إعداد الطالب: عبدالرحمن احمد محمد 780</div>
+        </div>
     </header>
 
-    <div class="nav-buttons">
-        <button class="nav-btn" onclick="showExam('exam2024')">امتحان 2023/2024</button>
-        <button class="nav-btn" onclick="showExam('exam2023')">امتحان 2023 (قريباً)</button>
-        <button class="nav-btn" onclick="showExam('exam2022')">امتحان 2022 (قريباً)</button>
-    </div>
-
-    <div id="exam2024" class="exam-section active">
+    <!-- قائمة التنقل -->
+    <nav class="bg-white shadow-md p-4 mb-8">
+        <div class="container mx-auto flex justify-center space-x-4 space-x-reverse flex-wrap gap-y-2">
+            <button onclick="switchSection('2024')" id="btn-2024" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold shadow hover:bg-blue-700 transition">امتحان 2024</button>
+            <button onclick="switchSection('2023')" id="btn-2023" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold shadow hover:bg-gray-300 transition">امتحان 2023</button>
+            <button onclick="switchSection('2022')" id="btn-2022" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold shadow hover:bg-gray-300 transition">امتحان 2022</button>
+            <button onclick="switchSection('old')" id="btn-old" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold shadow hover:bg-gray-300 transition">أسئلة سابقة</button>
         </div>
+    </nav>
 
-    <div id="exam2023" class="exam-section">
-        <p style="text-align: center;">سيتم إضافة الأسئلة قريباً...</p>
+    <!-- عنوان القسم الحالي -->
+    <div class="container mx-auto max-w-4xl px-4 mb-4">
+        <h2 id="section-title" class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 inline-block">امتحان 2024</h2>
     </div>
-    <div id="exam2022" class="exam-section">
-        <p style="text-align: center;">سيتم إضافة الأسئلة قريباً...</p>
+
+    <!-- حاوية الأسئلة -->
+    <div class="container mx-auto px-4 max-w-4xl" id="quiz-container"></div>
+
+    <!-- زر النتيجة -->
+    <div id="result-container" class="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-[0_-5px_15px_rgba(0,0,0,0.1)] border-t border-gray-200 z-40">
+        <div class="container mx-auto max-w-4xl flex justify-between items-center">
+            <div id="result-display" class="font-bold text-xl text-blue-800 hidden"></div>
+            <button onclick="calculateResult()" class="w-full md:w-auto px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-lg transition transform hover:scale-105">
+                إنهاء الامتحان وإظهار النتيجة
+            </button>
+        </div>
     </div>
 
-    <button id="finishBtn" class="finish-btn" onclick="calculateScore()">إنهاء الامتحان وعرض النتيجة</button>
-</div>
+    <!-- الكود البرمجي -->
+    <script>
+        const exams = {
+            "2024": [
+                // MCQs 71-108
+                { id: 71, type: "mcq", question: "يمكن إدراج معادلات رياضية (Equation) عند الضغط على أيقونة السهم رقم:", options: ["16", "17", "8", "15"], answer: 2, explanation: "الإجابة الصحيحة هي: 8 (الخيار c)" },
+                { id: 72, type: "mcq", question: "يمكن إدراج موقع على الإنترنت عند الضغط على أيقونة السهم رقم:", options: ["11", "12", "13", "15"], answer: 0, explanation: "الإجابة الصحيحة هي: 11 (الخيار a)" },
+                { id: 73, type: "mcq", question: "يمكن إدراج أرقام الصفحات عند الضغط على أيقونة السهم رقم:", options: ["16", "14", "15", "15"], answer: 1, explanation: "الإجابة الصحيحة هي: 14 (الخيار b)" },
+                { id: 74, type: "mcq", question: "يمكن إدراج رسم بياني عند الضغط على أيقونة السهم رقم:", options: ["16", "17", "10", "9"], answer: 3, explanation: "الإجابة الصحيحة هي: 9 (الخيار d)" },
+                { id: 75, type: "mcq", question: "يمكن إدراج الرموز () عند الضغط على أيقونة السهم رقم:", options: ["19", "17", "18", "15"], answer: 0, explanation: "الإجابة الصحيحة هي: 19 (الخيار a)" },
+                { id: 76, type: "mcq", question: "يمكن إدراج أغلفة للتقارير (Cover Page) عند الضغط على أيقونة السهم رقم:", options: ["16", "7", "8", "1"], answer: 3, explanation: "الإجابة الصحيحة هي: 1 (الخيار d)" },
+                { id: 77, type: "mcq", question: "يمكن إدراج جدول مكون من 3 أعمدة و 4 صفوف عند الضغط على أيقونة السهم رقم:", options: ["6", "4", "3", "15"], answer: 1, explanation: "الإجابة الصحيحة هي: 4 (الخيار b)" },
+                { id: 78, type: "mcq", question: "يمكن إدراج صورة عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "15"], answer: 0, explanation: "الإجابة الصحيحة هي: 6 (الخيار a)" },
+                { id: 79, type: "mcq", question: "يمكن إدراج فواصل بين الصفحات عند الضغط على أيقونة السهم رقم:", options: ["6", "3", "8", "15"], answer: 1, explanation: "الإجابة الصحيحة هي: 3 (الخيار b)" },
+                { id: 80, type: "mcq", question: "يمكن إدراج معادلات رياضية عند الضغط على أيقونة السهم رقم:", options: ["16", "17", "18", "15"], answer: 2, explanation: "الإجابة الصحيحة هي: 18 (الخيار c)" },
+                { id: 81, type: "mcq", question: "يمكن إدراج عمود يمكن الكتابة فيه (Text Box) عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "15"], answer: 3, explanation: "الإجابة الصحيحة هي: 15 (الخيار d)" },
+                { id: 82, type: "mcq", question: "يمكن كتابة عنوان في الهامش العلوي لكل الصفحات عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "12", "15"], answer: 2, explanation: "الإجابة الصحيحة هي: 12 (الخيار c)" },
+                { id: 83, type: "mcq", question: "يمكن إدراج الوقت والتاريخ عند الضغط على أيقونة السهم رقم:", options: ["12", "17", "13", "14"], answer: 1, explanation: "الإجابة الصحيحة هي: 17 (الخيار b)" },
+                { id: 84, type: "mcq", question: "يمكن كتابة عنوان في الهامش السفلي لكل الصفحات عند الضغط على أيقونة السهم رقم:", options: ["13", "17", "18", "14"], answer: 0, explanation: "الإجابة الصحيحة هي: 13 (الخيار a)" },
+                { id: 85, type: "mcq", question: "يمكن إدراج مربع أو دائرة (Shapes) عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "5"], answer: 1, explanation: "الإجابة الصحيحة هي: 7 (الخيار b)" },
+                { id: 86, type: "mcq", question: "عدد الرسائل الواردة (Inbox) في الشكل التالي:", options: ["5210", "17", "188", "84"], answer: 0, explanation: "الإجابة الصحيحة هي: 5210" },
+                { id: 87, type: "mcq", question: "عدد الرسائل التي تم مسحها (Deleted Items) في الشكل التالي:", options: ["5210", "17", "188", "84"], answer: 2, explanation: "الإجابة الصحيحة هي: 188" },
+                { id: 88, type: "mcq", question: "عدد الرسائل التي تم إرسالها إلى سلة المهملات (Junk Email) في الشكل التالي:", options: ["5210", "17", "188", "84"], answer: 3, explanation: "الإجابة الصحيحة هي: 84" },
+                { id: 89, type: "mcq", question: "عند الضغط على CTRL + C لملف ورد:", options: ["يتم فتح ملف جديد", "يتم عمل غلاف للمستند", "يتم قص الملف", "يتم نسخ الملف"], answer: 3, explanation: "الإجابة الصحيحة هي: يتم نسخ الملف" },
+                { id: 90, type: "mcq", question: "يستخدم شريط الصيغة في برنامج الإكسيل في:", options: ["يتم تحديد المستند", "كتابة المعادلات أو الدوال", "تظهر عنوان الخلية", "يتم فتح ملف جديد"], answer: 1, explanation: "الإجابة الصحيحة هي: كتابة المعادلات أو الدوال" },
+                { id: 91, type: "mcq", question: "عند الضغط على Wrap text في برنامج الإكسيل يمكن الكتابة في الخلية الواحدة:", options: ["سطر واحد", "كلمة واحدة", "أكثر من سطر", "إدراج صورة"], answer: 2, explanation: "الإجابة الصحيحة هي: أكثر من سطر" },
+                { id: 92, type: "mcq", question: "عند الضغط على أيقونة WordArt يمكن إدراج:", options: ["خطوط ملونة زاهية", "غلاف للمستند", "فواصل بين الصفحات", "جدول"], answer: 0, explanation: "الإجابة الصحيحة هي: خطوط ملونة زاهية" },
+                { id: 93, type: "mcq", question: "يعتبر برنامج مايكروسوفت باوربوينت من البرامج البسيطة والفعالة في:", options: ["تجميل الملف", "تنسيق كتب", "رسم جداول", "إعداد العروض التفاعلية"], answer: 3, explanation: "الإجابة الصحيحة هي: إعداد العروض التفاعلية" },
+                { id: 94, type: "mcq", question: "يمكن إدراج علامة مائية عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "5"], answer: 0, explanation: "الإجابة الصحيحة هي: 6 (الخيار a)" },
+                { id: 95, type: "mcq", question: "يمكن إدراج المسافات بين الأسطر عند الضغط على أيقونة السهم رقم:", options: ["1", "2", "3", "4"], answer: 1, explanation: "الإجابة الصحيحة: 2" },
+                { id: 96, type: "mcq", question: "يمكن تغيير لون الورقة عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "5"], answer: 2, explanation: "الإجابة الصحيحة هي: 8 (الخيار c)" },
+                { id: 97, type: "mcq", question: "يمكن تغيير الهوامش عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "5"], answer: 1, explanation: "الإجابة الصحيحة هي: 7 (الخيار b)" },
+                { id: 98, type: "mcq", question: "يمكن تغيير حجم الورقة عند الضغط على أيقونة السهم رقم:", options: ["6", "3", "4", "5"], answer: 2, explanation: "الإجابة الصحيحة هي: 4 (الخيار c)" },
+                { id: 99, type: "mcq", question: "يمكن إدراج عدد الأسطر عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "5"], answer: 3, explanation: "الإجابة الصحيحة هي: 5 (الخيار d)" },
+                { id: 100, type: "mcq", question: "مايكروسوفت إكسيل هو برنامج متخصص يستخدم في:", options: ["كل ما سبق", "إنشاء الجداول الحسابية", "عمل الحسابات", "رسم المخططات البيانية"], answer: 0, explanation: "الإجابة الصحيحة هي: كل ما سبق" },
+                { id: 101, type: "mcq", question: "السهم رقم 1 يشير إلى:", options: ["صف", "إدراج أو إزالة صف", "نوع المعادلة", "عنوان الخلية"], answer: 3, explanation: "الإجابة الصحيحة هي: عنوان الخلية (Name Box)" },
+                { id: 102, type: "mcq", question: "السهم رقم 2 يشير إلى:", options: ["صف", "إدراج أو إزالة صف", "نوع المعادلة", "الخانة الخاصة بكتابة المعادلة"], answer: 3, explanation: "الإجابة الصحيحة هي: الخانة الخاصة بكتابة المعادلة (Formula Bar)" },
+                { id: 103, type: "mcq", question: "أي من المعادلات التالية تمثل دالة countif:", options: ['=COUNTIF($B$2:$B$21,">0")', 'Other', 'Other', 'Other'], answer: 0, explanation: 'الإجابة الصحيحة هي: =COUNTIF($B$2:$B$21,">0")' },
+                { id: 104, type: "mcq", question: "أي من المعادلات التالية تمثل دالة large:", options: ['Other', 'Other', '=LARGE($B$2:$B$20,4)', 'Other'], answer: 2, explanation: 'الإجابة الصحيحة هي: =LARGE($B$2:$B$20,4)' },
+                { id: 105, type: "mcq", question: "أي من المعادلات التالية تمثل دالة countblank:", options: ['=COUNTBLANK(D2:D21)', 'Other', 'Other', 'Other'], answer: 0, explanation: 'الإجابة الصحيحة هي: =COUNTBLANK(D2:D21)' },
+                { id: 106, type: "mcq", question: "أي من المعادلات التالية تمثل دالة Small:", options: ['Other', 'Other', 'Other', '=SMALL($B$2:$B$21,3)'], answer: 3, explanation: 'الإجابة الصحيحة هي: =SMALL($B$2:$B$21,3)' },
+                { id: 107, type: "mcq", question: "في المعادلة IF(B2>=90,'A+',IF(B2>=80,'B+',IF(B2>=50,'C+',IF(B2<50,'F',)))) الطالب الحاصل على 52 درجة يحصل على:", options: ["A+", "B+", "C+", "F"], answer: 2, explanation: "الإجابة الصحيحة هي: C+ (لأنه أكبر من 50 وأقل من 80)" },
+                { id: 108, type: "mcq", question: "في نفس المعادلة السابقة، الطالب الحاصل على 90 درجة يحصل على:", options: ["A+", "B+", "C+", "F"], answer: 0, explanation: "الإجابة الصحيحة هي: A+" },
+                // TF 1-40
+                { id: 1, type: "tf", question: "من أهم برمجيات أنظمة التشغيل ويندوز أو أندرويد و Microsoft Office", answer: false, explanation: "Microsoft Office يعتبر برامج تطبيقية (Application Software) وليس نظام تشغيل." },
+                { id: 2, type: "tf", question: "يمكن استخدام جهاز الحاسب الآلي بدون تحميل برمجيات أنظمة التشغيل", answer: false, explanation: "نظام التشغيل هو المسؤول عن إدارة عتاد الحاسب وبدونه لا يعمل الجهاز ولا يمكن تشغيل البرامج." },
+                { id: 3, type: "tf", question: "البرنامج هو مجموعة مرتبة من التعليمات مكتوبة بأحد لغات البرمجة", answer: true, explanation: "هذا هو التعريف الصحيح للبرنامج (Software Program)." },
+                { id: 4, type: "tf", question: "End User هو الشخص المستخدم النهائي للحاسب", answer: true, explanation: "المستخدم النهائي هو الشخص الذي يستعمل المنتج البرمجي أو الجهاز لإنجاز مهامه." },
+                { id: 5, type: "tf", question: "Network هي مجموعة من الحواسيب المرتبط بعضها والتي لا يمكن مشاركة البيانات أو الاتصال الكترونياً فيما بينهم", answer: false, explanation: "الهدف الأساسي من الشبكة (Network) هو مشاركة البيانات والموارد، فعبارة 'لا يمكن' جعلت الجملة خاطئة." },
+                { id: 6, type: "tf", question: "Internet هي أكبر شبكة للحاسبات في العالم، للتواصل مع ملايين المستخدمين من مواقع أخرى", answer: true, explanation: "الإنترنت هو الشبكة العالمية التي تربط الشبكات ببعضها البعض." },
+                { id: 7, type: "tf", question: "Web هي واجهة متعددة الوسائط إلى العديد من الموارد المتاحة على شبكة الإنترنت", answer: true, explanation: "الويب (WWW) هو الخدمة التي تتيح تصفح النصوص والصور والوسائط عبر الإنترنت." },
+                { id: 8, type: "tf", question: "Algorithm هي مجموعة من الخطوات الرياضية والمنطقية وسميت الخوارزمية بهذا الاسم نسبة إلى البلد الذي نشأت فيه", answer: false, explanation: "التعريف صحيح لكن سبب التسمية خطأ؛ سميت نسبة إلى العالم 'الخوارزمي' وليس البلد." },
+                { id: 9, type: "tf", question: "يستخدم حساس درجة الحرارة في التكييف في المهمة الأولى من معالجة الكمبيوتر للمعلومات", answer: false, explanation: "الحساسات مرتبطة بأنظمة التحكم وهي أداة إدخال (Input) وليست المعالجة نفسها." },
+                { id: 10, type: "tf", question: "المعالجة Data processing هي عملية تحويل درجة الحرارة المقاسة إلى صورة رقمية يمكن التعامل معها", answer: false, explanation: "المعالجة هي تحويل البيانات الخام إلى معلومات مفيدة، وليس فقط درجات الحرارة. تحويل الإشارة لرقمية يسمى Digitization." },
+                { id: 11, type: "tf", question: "Motherboard هو الجزء الرئيسي التي يتم توصيل فيها جميع القطع الأخرى بالكمبيوتر والتنسيق فيما بينها", answer: true, explanation: "اللوحة الأم هي العمود الفقري للجهاز الذي يربط كافة المكونات." },
+                { id: 12, type: "tf", question: "Processor هو العقل الرئيسي الذي يقوم بإدارة الكمبيوتر والتحكم في سرعته ويحتوي على وحدة تحكم فقط", answer: true, explanation: "المعالج هو العقل المدبر للحاسب." },
+                { id: 13, type: "tf", question: "وحدة التحكم في المعالج يمكن من خلالها إصدار الأوامر في جميع أقسام الحاسب والتنسيق في ما بينهم", answer: true, explanation: "وظيفة وحدة التحكم (Control Unit) هي توجيه تدفق البيانات والأوامر." },
+                { id: 14, type: "tf", question: "يستخدم القرص الصلب في تخزين المعلومات والبيانات بصورة مؤقتة", answer: false, explanation: "القرص الصلب (Hard Disk) هو وحدة تخزين دائمة. الذاكرة المؤقتة هي الرام (RAM)." },
+                { id: 15, type: "tf", question: "تم اختراع الحاسب الآلي في القرن الثامن عشر", answer: false, explanation: "بدايات الحاسب الآلي الإلكتروني كانت في منتصف القرن العشرين (الأربعينات)." },
+                { id: 16, type: "tf", question: "الجيل الثاني للكمبيوتر كان عام 1965", answer: false, explanation: "عام 1965 يرتبط عادة ببداية الجيل الثالث. الجيل الثاني كان قبل ذلك." },
+                { id: 17, type: "tf", question: "يعتبر الحاسب الآلي المحمول (Laptop) الكمبيوتر الأكثر استخداماً في العالم", answer: false, explanation: "الهواتف الذكية (Smartphones) والأنظمة المدمجة هي الأكثر عدداً وانتشاراً حالياً." },
+                { id: 18, type: "tf", question: "الحاسب الآلي اللوحي يستخدم نظام تشغيل ويندوز أو نظام تشغيل الأندرويد", answer: true, explanation: "الأجهزة اللوحية (Tablets) تعمل بأنظمة متعددة منها ويندوز وأندرويد و iOS." },
+                { id: 19, type: "tf", question: "يستخدم السيرفر في تشغيل عدد كبير من الحاسبات الشخصية والتنسيق في ما بينهم", answer: true, explanation: "السيرفر (الخادم) يقدم خدمات وموارد لأجهزة الشبكة." },
+                { id: 20, type: "tf", question: "تتم معالجة الكمبيوتر للمعلومات على ثلاث خطوات", answer: true, explanation: "الخطوات الأساسية هي: إدخال (Input) -> معالجة (Process) -> إخراج (Output)." },
+                { id: 21, type: "tf", question: "تتم المهمة الثانية لمعالجة المعلومات في القرص الصلب Hard Disk والشاشة", answer: false, explanation: "المعالجة (المهمة الثانية) تتم في المعالج (CPU) والرام، وليس القرص الصلب أو الشاشة." },
+                { id: 22, type: "tf", question: "data هي المعلومات والبيانات التي يتم إدخالها للحاسب الآلي تمهيداً لبدء المعالجة", answer: true, explanation: "البيانات (Data) هي المادة الخام المدخلة." },
+                { id: 23, type: "tf", question: "data output هي عملية الاحتفاظ بالبيانات في الذاكرة الخاصة بالكمبيوتر لاسترجاعها عند الحاجة إليها", answer: false, explanation: "هذا تعريف التخزين (Storage). الإخراج هو إظهار النتائج للمستخدم." },
+                { id: 24, type: "tf", question: "يفقد الرام أو الذاكرة العشوائية جميع المعلومات الموجودة داخلها عند عمل ريستارت أو غلق الجهاز", answer: true, explanation: "ذاكرة RAM هي ذاكرة متطايرة (Volatile) تفقد محتواها بانقطاع التيار." },
+                { id: 25, type: "tf", question: "يستخدم برنامج Microsoft teams في إنشاء فصل تفاعلي لنقل المادة العلمية والتفاعل مع الطلاب", answer: true, explanation: "تيمز هو منصة تواصل وتعليم عن بعد." },
+                { id: 26, type: "tf", question: "جهاز كمبيوتر Pc هو أكثر عملية وأكثر تطوراً ذلك لأنه تم دمج الأجزاء الكبيرة في أجزاء صغيرة خفيفة يمكن حملها", answer: false, explanation: "الوصف ينطبق على اللابتوب أو التابلت، وليس الـ PC المكتبي الذي يصعب حمله." },
+                { id: 27, type: "tf", question: "عند توقف السيرفر الخاص بشركة جوجل فلن تتوقف خدمة الإنترنت في مصر مثل شركة مايكروسوفت", answer: false, explanation: "الإنترنت شبكة عالمية لا تعتمد على شركة واحدة فقط، والجملة بمعناها العام خاطئة." },
+                { id: 28, type: "tf", question: "عند عمل ريستارت أو غلق الكمبيوتر فإن الروم ROM تفقد المعلومات المخزنة داخلها", answer: false, explanation: "ذاكرة ROM هي ذاكرة قراءة فقط دائمة لا تفقد بياناتها بانقطاع الكهرباء." },
+                { id: 29, type: "tf", question: "يتكون السيرفر من عدد كبير جداً من أجهزة الكمبيوتر فائقة السرعة ذات السعة التخزينية المنخفضة", answer: false, explanation: "السيرفرات تحتاج سعة تخزينية عالية جداً وليس منخفضة." },
+                { id: 30, type: "tf", question: "تعتبر شاشة الموبايل و التاب Touch screen من وحدات الإخراج فقط", answer: false, explanation: "شاشة اللمس تعتبر وحدة إدخال وإخراج في نفس الوقت." },
+                { id: 31, type: "tf", question: "يعتبر تصميم برنامج لتصنيف الطلاب إلي راسب وناجح خوارزمية", answer: true, explanation: "أي تسلسل منطقي لحل مشكلة يعتبر خوارزمية." },
+                { id: 32, type: "tf", question: "يختص (Outlook) بالإيميل الخاص بالطالب الذي يمكن من خلاله إرسال واستقبال الرسائل النصية", answer: true, explanation: "Outlook هو برنامج لإدارة البريد الإلكتروني." },
+                { id: 33, type: "tf", question: "يستخدم (One Drive) في عمل محاضرة تفاعلية مع الطلبة", answer: false, explanation: "OneDrive هو خدمة تخزين سحابي، وليس للمحاضرات التفاعلية." },
+                { id: 34, type: "tf", question: "يمكن إرسال رسالة بريد إلكتروني بالضغط على أيقونة Inbox", answer: false, explanation: "Inbox هو صندوق الوارد. للإرسال نستخدم New Email أو Compose." },
+                { id: 35, type: "tf", question: "عند النقر فوق CTRL + A يمكن تحديد أول سطر من المستند في برنامج Word", answer: false, explanation: "CTRL + A تقوم بتحديد المستند بالكامل (Select All)." },
+                { id: 36, type: "tf", question: "Junk Emails و هي الرسائل البريدية الموجودة في صندوق المخلفات فبالتالي يجب مسحها والتخلص منها نهائياً", answer: true, explanation: "الـ Junk هي رسائل غير مرغوب فيها أو دعائية." },
+                { id: 37, type: "tf", question: "لا يوجد فرق بين الضغط على Save أو Save as في برنامج Word", answer: false, explanation: "Save يحفظ التعديلات على نفس الملف، Save As يحفظ نسخة جديدة." },
+                { id: 38, type: "tf", question: "لما قمت بنسخ أي شيء في MS Word ، يتم إرساله تلقائياً إلى الحافظة Clipboard", answer: true, explanation: "الحافظة هي المكان المؤقت الذي يحفظ ما تم نسخه." },
+                { id: 39, type: "tf", question: "تستخدم الرمز CTRL + X في نسخ Copy جزء من مقالة في Word", answer: false, explanation: "CTRL + X تستخدم للقص (Cut)، أما النسخ فهو CTRL + C." },
+                { id: 40, type: "tf", question: "تستخدم قائمة Find and replace في البحث عن وظيفة", answer: false, explanation: "تستخدم للبحث عن نص واستبداله داخل المستند." }
+            ],
+            "2023": [
+                // TF 1-31
+                { id: 1, type: "tf", question: "تم اختراع الحاسب الآلي في القرن التاسع عشر", answer: false, explanation: "الحاسب الآلي الإلكتروني بشكله المتعارف عليه ظهر في القرن العشرين (منتصف الأربعينات)." },
+                { id: 2, type: "tf", question: "الجيل الثاني للكمبيوتر كان عام 1953", answer: false, explanation: "الجيل الثاني (الترانزستور) بدأ تقريباً في أواخر الخمسينات. 1953 لا تزال ضمن الجيل الأول." },
+                { id: 3, type: "tf", question: "يعتبر الحاسب الآلي المحمول (Laptop) الكمبيوتر الأكثر استخداماً في العالم", answer: false, explanation: "الهواتف الذكية (Smartphones) والأنظمة المدمجة هي الأكثر انتشاراً." },
+                { id: 4, type: "tf", question: "الحاسب الآلي اللوحي يستخدم نظام تشغيل ويندوز أو نظام تشغيل الأندرويد", answer: false, explanation: "الإجابة في الورقة مختارة 'خطأ' (قد يكون بسبب عدم الحصر أو وجود أنظمة أخرى)." },
+                { id: 5, type: "tf", question: "يستخدم السيرفر في تشغيل عدد كبير من الحاسبات الشخصية والتنسيق في ما بينهم", answer: false, explanation: "السيرفر يقدم خدمات للأجهزة ولا يقوم بتشغيلها حرفياً." },
+                { id: 6, type: "tf", question: "تتم معالجة الكمبيوتر للمعلومات على خطوتين", answer: false, explanation: "العمليات الأساسية ثلاث: إدخال (Input)، معالجة (Process)، إخراج (Output)." },
+                { id: 7, type: "tf", question: "تتم المهمة الثانية لمعالجة المعلومات من خلال مجموعة من السينسورات أو الحساسات", answer: false, explanation: "الحساسات هي أدوات 'إدخال' (المهمة الأولى)." },
+                { id: 8, type: "tf", question: "Data هي المعلومات والبيانات التي يتم إدخالها للحاسب الآلي تمهيداً لبدء المعالجة", answer: true, explanation: "البيانات (Data) هي المدخلات الخام." },
+                { id: 9, type: "tf", question: "Data Output هي عملية الاحتفاظ بالبيانات في الذاكرة الخاصة بالكمبيوتر لاسترجاعها عند الحاجة إليها", answer: false, explanation: "هذا تعريف التخزين (Storage). الإخراج هو عرض النتائج." },
+                { id: 10, type: "tf", question: "الرام أو الذاكرة العشوائية عند عمل ريستارت أو غلق الجهاز يتم الاحتفاظ بجميع المعلومات الموجودة داخلها", answer: false, explanation: "الرام (RAM) ذاكرة متطايرة تفقد محتواها عند فصل الطاقة." },
+                { id: 11, type: "tf", question: "الباور سبلاي يقوم بتحويل الفولت من 220 فولت إلى 12 فولت ليتلائم مع اللوحة الأم وذلك لتشغيلها", answer: true, explanation: "وظيفة مزود الطاقة تحويل التيار المتردد العالي لتيار مستمر منخفض." },
+                { id: 12, type: "tf", question: "يستخدم برنامج Microsoft Teams في إنشاء فصل تفاعلي لنقل المادة العلمية والتفاعل مع الطلاب", answer: true, explanation: "تيمز منصة تعليمية وتواصلية." },
+                { id: 13, type: "tf", question: "جهاز كمبيوتر Pc هو أكثر عملية وأكثر تطوراً ذلك لأنه تم دمج الأجزاء الكبيرة في أجزاء صغيرة خفيفة يمكن حملها", answer: false, explanation: "هذا الوصف ينطبق على اللابتوب، وليس الـ PC المكتبي." },
+                { id: 14, type: "tf", question: "الخادم هو حاسب آلي له ذاكرة كبيرة وسرعته عالية حيث يمكن استخدامه في تشغيل عدد كبير من الحاسبات الشخصية", answer: true, explanation: "الخوادم تتميز بمواصفات قوية جداً." },
+                { id: 15, type: "tf", question: "عند حفظ أي بيانات على موقع Outlook فإنها تخزن في السيرفر الخاص بشركة جوجل", answer: false, explanation: "Outlook تابع لشركة Microsoft، لذا تخزن في سيرفرات مايكروسوفت." },
+                { id: 16, type: "tf", question: "يستخدم حساس قياس درجة الحرارة في التكييف في المهمة الأولى من معالجة الكمبيوتر للمعلومات", answer: true, explanation: "الحساس يقوم بالإدخال (المهمة الأولى)." },
+                { id: 17, type: "tf", question: "يستخدم الكمبيوتر الداخلي في التكييف في المهمة الأولى من معالجة الكمبيوتر للمعلومات", answer: false, explanation: "الكمبيوتر/المعالج يقوم بـ 'المعالجة' وهي المهمة الثانية." },
+                { id: 18, type: "tf", question: "تستخدم شاشة عرض درجة الحرارة في التكييف في المهمة الثالثة من معالجة الكمبيوتر للمعلومات", answer: true, explanation: "الشاشة وسيلة إخراج (المهمة الثالثة)." },
+                { id: 19, type: "tf", question: "Data processing هي عملية تحويل درجة الحرارة المقاسة إلى صورة رقمية يمكن التعامل معها", answer: true, explanation: "تحويل الإشارة الفيزيائية إلى رقمية هو جزء من المعالجة." },
+                { id: 20, type: "tf", question: "المعالج هو الجزء الرئيسي الذي يتم توصيل فيها جميع القطع الأخرى ويستخدم في نقل البيانات لمختلف أجزاء الكمبيوتر", answer: false, explanation: "هذه وظيفة اللوحة الأم (Motherboard)." },
+                { id: 21, type: "tf", question: "يعتبر المعالج هو العقل الرئيسي الذي يقوم بإدارة الكمبيوتر والتحكم في سرعته", answer: true, explanation: "المعالج (CPU) هو العقل المدبر." },
+                { id: 22, type: "tf", question: "وحدة الحساب والمنطق يمكن من خلالها إصدار الأوامر في جميع أقسام الحاسب والتنسيق في ما بينها", answer: false, explanation: "هذه وظيفة وحدة التحكم (Control Unit)." },
+                { id: 23, type: "tf", question: "يستخدم القرص الصلب في تخزين المعلومات والبيانات بصورة مؤقتة لا دائمة", answer: false, explanation: "القرص الصلب تخزينه دائم." },
+                { id: 24, type: "tf", question: "من أهم برمجيات أنظمة التشغيل ويندوز أو أندرويد و Microsoft Office", answer: true, explanation: "تم اعتماد الإجابة 'صح' بناءً على التصحيح في الورقة الأصلية (رغم دمج الأوفيس)." },
+                { id: 25, type: "tf", question: "يعتبر جهاز الحاسب الآلي بدون برمجيات أنظمة التشغيل قطعة من الحديد لا يمكن استخدامها", answer: true, explanation: "المعدات تحتاج لنظام تشغيل لتعمل." },
+                { id: 26, type: "tf", question: "البرنامج هو مجموعة مرتبة من التعليمات مكتوبة بأحد لغات البرمجة", answer: true, explanation: "تعريف صحيح للبرنامج." },
+                { id: 27, type: "tf", question: "End User هو الشخص الذي يقوم بكتابة برامج للحاسب يمكن تطبيقها عملياً", answer: false, explanation: "المبرمج يكتب البرامج، المستخدم النهائي (End User) يستخدمها." },
+                { id: 28, type: "tf", question: "Network هي مجموعة من الحواسيب المرتبطة مع بعضها من أجل مشاركة البيانات الاتصال الكترونياً كل مع الآخر", answer: true, explanation: "الهدف من الشبكة هو المشاركة والاتصال." },
+                { id: 29, type: "tf", question: "Internet هي أكبر شبكة للحاسبات في العالم، يمكن توصيل مستخدم الحاسب مع الملايين من الناس في موقع FaceBook فقط", answer: false, explanation: "الإنترنت يربطك بكل المواقع والخدمات، وليس فيسبوك فقط." },
+                { id: 30, type: "tf", question: "Web هي واجهة متعددة الوسائط إلى العديد من الموارد المتاحة على شبكة الإنترنت", answer: true, explanation: "الويب هو الواجهة الرسومية للإنترنت." },
+                { id: 31, type: "tf", question: "Algorithm هي مجموعة من الخطوات الرياضية والمنطقية المتسلسلة، والتي تصمم لحل مشكلة ما، وسميت الخوارزمية بهذا الاسم نسبة إلى البلد الذي نشأت فيه", answer: false, explanation: "سميت نسبة للعالم الخوارزمي وليس البلد." },
+                // MCQs 71-110
+                { id: 71, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 1 يمكن إدراج:", options: ["صفحة فارغة", "فواصل صفحات", "أغلفة جاهزة", "جدول"], answer: 2, explanation: "الإجابة الصحيحة: أغلفة جاهزة (c)" },
+                { id: 72, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 2 يمكن إدراج:", options: ["صفحة فارغة", "فواصل صفحات", "صورة", "جدول"], answer: 0, explanation: "الإجابة الصحيحة: صفحة فارغة (a)" },
+                { id: 73, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 3 يمكن إدراج:", options: ["أغلفة", "فواصل بين الصفحات", "جدول", "صورة"], answer: 1, explanation: "الإجابة الصحيحة: فواصل بين الصفحات (b)" },
+                { id: 74, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 18 يمكن إدراج:", options: ["رمز", "وقت وتاريخ", "توقيع", "معادلات رياضية"], answer: 3, explanation: "الإجابة الصحيحة: معادلات رياضية (d)" },
+                { id: 75, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 4 يمكن إدراج:", options: ["جدول", "صورة", "شكل", "مخطط"], answer: 0, explanation: "الإجابة الصحيحة: جدول (a)" },
+                { id: 76, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 5 يمكن إدراج:", options: ["جدول", "صورة", "شكل", "مخطط"], answer: 1, explanation: "الإجابة الصحيحة: صورة (b)" },
+                { id: 77, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 7 يمكن إدراج:", options: ["جدول", "صورة", "أشكال هندسية", "مخطط"], answer: 2, explanation: "الإجابة الصحيحة: أشكال هندسية (c)" },
+                { id: 78, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 8 يمكن إدراج:", options: ["جدول", "صورة", "أشكال هندسية", "مخططات هندسية"], answer: 3, explanation: "الإجابة الصحيحة: مخططات هندسية (d)" },
+                { id: 79, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 9 يمكن إدراج:", options: ["رسم بياني", "لقطة شاشة", "متجر", "فيديو"], answer: 0, explanation: "الإجابة الصحيحة: رسم بياني (a)" },
+                { id: 80, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 11 يمكن إدراج:", options: ["تعليق", "رابط", "موقع الكتروني", "إشارة مرجعية"], answer: 2, explanation: "الإجابة الصحيحة: موقع الكتروني (c)" },
+                { id: 81, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 12 يمكن إدراج:", options: ["تذييل", "رقم صفحة", "مربع نص", "عنوان في رأس الصفحة"], answer: 3, explanation: "الإجابة الصحيحة: عنوان في رأس الصفحة (d)" },
+                { id: 82, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 13 يمكن إدراج:", options: ["عنوان في ذيل الصفحة", "رقم صفحة", "مربع نص", "WordArt"], answer: 0, explanation: "الإجابة الصحيحة: عنوان في ذيل الصفحة (a)" },
+                { id: 83, type: "mcq", question: "يمكن إدراج الوقت والتاريخ عند الضغط على أيقونة السهم رقم:", options: ["15", "17", "16", "18"], answer: 1, explanation: "الإجابة الصحيحة: 17 (b)" },
+                { id: 84, type: "mcq", question: "يمكن إدراج الرمز التالي () عند الضغط على أيقونة السهم رقم:", options: ["19", "18", "17", "16"], answer: 0, explanation: "الإجابة الصحيحة: 19 (a)" },
+                { id: 85, type: "mcq", question: "يمكن إدراج المعادلة التالية عند الضغط على أيقونة السهم رقم:", options: ["16", "17", "18", "19"], answer: 2, explanation: "الإجابة الصحيحة: 18 (c)" },
+                { id: 86, type: "mcq", question: "عدد الرسائل الواردة (Inbox) في الشكل التالي:", options: ["11", "44", "2416", "5"], answer: 2, explanation: "الإجابة الصحيحة: 2416 (c) - انظر الصورة في السؤال 85" },
+                { id: 87, type: "mcq", question: "عدد الرسائل التي تم مسحها (Deleted Items) في الشكل التالي:", options: ["11", "5", "2416", "44"], answer: 3, explanation: "الإجابة الصحيحة: 44 (d) - انظر الصورة في السؤال 85" },
+                { id: 88, type: "mcq", question: "عدد الرسائل التي تم إرسالها في سلة المهملات (Junk Email) في الشكل التالي:", options: ["11", "44", "5", "2416"], answer: 0, explanation: "الإجابة الصحيحة: 11 (a) - انظر الصورة في السؤال 85" },
+                { id: 89, type: "mcq", question: "عند الضغط على CTRL + A لملف ورد:", options: ["يتم تحديد المستند بأكمله", "نسخ", "قص", "لصق"], answer: 0, explanation: "الإجابة الصحيحة: يتم تحديد المستند بأكمله (a)" },
+                { id: 90, type: "mcq", question: "عند النقر فوق السهم الموجود أسفل مجموعة الحافظة clipboard:", options: ["خيارات اللصق", "خيارات النسخ", "تظهر جميع العناصر التي سبق نسخها", "مسح الكل"], answer: 2, explanation: "الإجابة الصحيحة: تظهر جميع العناصر التي سبق نسخها (c)" },
+                { id: 91, type: "mcq", question: "عند الضغط على CTRL + X لملف ورد:", options: ["نسخ", "لصق", "تراجع", "يتم قص جميع الأجزاء التي سبق تحديدها"], answer: 3, explanation: "الإجابة الصحيحة: يتم قص جميع الأجزاء التي سبق تحديدها (d)" },
+                { id: 92, type: "mcq", question: "عند الضغط على أيقونة WordArt يمكن إدراج:", options: ["صورة", "جدول", "مخطط", "خطوط ملونة زاهية"], answer: 3, explanation: "الإجابة الصحيحة: خطوط ملونة زاهية (d)" },
+                { id: 93, type: "mcq", question: "عند الضغط على أيقونة Page Number يمكن إدراج أرقام الصفحات في:", options: ["في رأس الصفحة أو في ذيل الصفحة", "المنتصف فقط", "الهوامش فقط", "لا شيء مما سبق"], answer: 0, explanation: "الإجابة الصحيحة: في رأس الصفحة أو في ذيل الصفحة (a)" },
+                { id: 94, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 1 (Themes) يمكن إدراج:", options: ["نماذج جاهزة ملونة", "هوامش", "ألوان", "خطوط"], answer: 0, explanation: "الإجابة الصحيحة: نماذج جاهزة ملونة (a)" },
+                { id: 95, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 2 (Margins) يمكن إدراج:", options: ["الهوامش الخاصة بالورقة", "ألوان", "حجم الورقة", "أعمدة"], answer: 0, explanation: "الإجابة الصحيحة: الهوامش الخاصة بالورقة (a)" },
+                { id: 96, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 6 (Page Color) يمكن إدراج:", options: ["علامة مائية", "حدود", "ألوان الصفحات", "ثيمات"], answer: 2, explanation: "الإجابة الصحيحة: ألوان الصفحات (c)" },
+                { id: 97, type: "mcq", question: "عند الضغط على أيقونة السهم رقم 8 (Paragraph Spacing) يمكن تعديل:", options: ["المسافة البادئة", "المحاذاة", "المسافات بين الأسطر", "لون الخط"], answer: 2, explanation: "الإجابة الصحيحة: المسافات بين الأسطر (c)" },
+                { id: 98, type: "mcq", question: "يتم عمل watermark في الملف:", options: ["لضمان ملكية الملف ومنع التصوير", "للتجميل", "للطباعة", "لا شيء"], answer: 0, explanation: "الإجابة الصحيحة: لضمان ملكية الملف ومنع التصوير (a)" },
+                { id: 99, type: "mcq", question: "مايكروسوفت إكسيل هو برنامج متخصص يستخدم في:", options: ["كل ما سبق", "الجداول", "المعادلات", "الرسوم البيانية"], answer: 0, explanation: "الإجابة الصحيحة: كل ما سبق (a)" },
+                { id: 100, type: "mcq", question: "مايكروسوفت Access هو برنامج متخصص يستخدم في إنشاء:", options: ["Data base (قواعد البيانات)", "عروض تقديمية", "مستندات", "جداول حسابية"], answer: 0, explanation: "الإجابة الصحيحة: Data base (a)" },
+                { id: 101, type: "mcq", question: "السهم رقم 1 يشير إلى:", options: ["شريط الصيغة", "رقم الصف", "عنوان الخلية (Name Box)", "اسم العمود"], answer: 2, explanation: "الإجابة الصحيحة: عنوان الخلية (c)" },
+                { id: 102, type: "mcq", question: "السهم رقم 2 يشير إلى:", options: ["الخانة الخاصة بكتابة المعادلة (Formula Bar)", "اسم الخلية", "رقم العمود", "تنسيق"], answer: 0, explanation: "الإجابة الصحيحة: الخانة الخاصة بكتابة المعادلة (a)" },
+                { id: 103, type: "mcq", question: "أي من المعادلات التالية تمثل دالة countif:", options: ['=COUNTIF($B$2:$B$21,">0")', 'Other', 'Other', 'Other'], answer: 0, explanation: 'الإجابة الصحيحة: (a)' },
+                { id: 104, type: "mcq", question: "أي من المعادلات التالية تمثل دالة large:", options: ['Other', '=LARGE($B$2:$B$20,4)', 'Other', 'Other'], answer: 1, explanation: 'الإجابة الصحيحة: (b)' },
+                { id: 105, type: "mcq", question: "أي من المعادلات التالية تمثل دالة countblank:", options: ['Other', 'Other', '=COUNTBLANK(D2:D21)', 'Other'], answer: 2, explanation: 'الإجابة الصحيحة: (c)' },
+                { id: 106, type: "mcq", question: "أي من المعادلات التالية تمثل دالة Small:", options: ['Other', 'Other', 'Other', '=SMALL($B$2:$B$21,3)'], answer: 3, explanation: 'الإجابة الصحيحة: (d)' },
+                { id: 107, type: "mcq", question: "في المعادلة IF(B2>=90,'A+',IF(B2>=80,'B+',IF(B2>=50,'C+',IF(B2<50,'F',)))) الطالب الحاصل على 50 درجة يحصل على:", options: ["A+", "B+", "C+", "F"], answer: 2, explanation: "الإجابة الصحيحة: C+ (c)" },
+                { id: 108, type: "mcq", question: "في نفس المعادلة السابقة، الطالب الحاصل على 89 درجة يحصل على:", options: ["A+", "B+", "C+", "F"], answer: 1, explanation: "الإجابة الصحيحة: B+ (b)" },
+                { id: 109, type: "mcq", question: "إذا كانت قيمة B2 = X لإيجاد قيمة Y في المعادلة المعطاة:", options: ["a", "((2*B2^5)/3)+((B2^2)/3)-10", "c", "d"], answer: 1, explanation: "الإجابة الصحيحة: (b)" },
+                { id: 110, type: "mcq", question: "إذا كانت قيمة B2 = X لإيجاد قيمة X في المعادلة المعطاة:", options: ["a", "b", "=(2*B2^5)^(1/3)", "d"], answer: 2, explanation: "الإجابة الصحيحة: (c)" }
+            ],
+            "2022": [
+                // --- صح وخطأ 2022 ---
+                { id: 1, type: "tf", question: "ذاكرة القراءة فقط ROM هي ذاكرة ثابتة يمكن الكتابة عليها.", answer: false, explanation: "ROM هي ذاكرة للقراءة فقط ولا يمكن للمستخدم العادي الكتابة عليها." },
+                { id: 2, type: "tf", question: "في برنامج معالج النصوص وورد لا تستطيع إدراج ترقيم الصفحات.", answer: false, explanation: "يمكن إدراج أرقام الصفحات من قائمة Insert ثم Page Number." },
+                { id: 3, type: "tf", question: "في برنامج Power point يمكن عمل ألبوم صور بالضغط على قائمة Insert ثم اختيار Photo Album.", answer: true, explanation: "خطوات صحيحة لإنشاء ألبوم صور." },
+                { id: 4, type: "tf", question: "قائمة Home في برنامج بوربوينت تحتوي على أدوات slides.", answer: true, explanation: "مجموعة Slides موجودة في تبويب Home." },
+                { id: 5, type: "tf", question: "الشبكات هي مجموعة من أجهزة الحاسب المتصلة معاً.", answer: true, explanation: "الهدف من الشبكة هو ربط الأجهزة للمشاركة." },
+                { id: 6, type: "tf", question: "شريط العنوان في برنامج Excel يحتوي على اسم الملف الحالي وشريط أدوات الوصول السريع.", answer: true, explanation: "شريط العنوان يظهر اسم المصنف وأدوات Quick Access." },
+                { id: 7, type: "tf", question: "لإدراج دالة في برنامج Excel تضغط على Insert Function ونختار الدالة المطلوبة.", answer: true, explanation: "صحيح، عبر أيقونة fx." },
+                { id: 8, type: "tf", question: "لإدراج رمز معين في برنامج وورد تستخدم قائمة Insert ثم Symbol.", answer: true, explanation: "المسار الصحيح لإدراج الرموز." },
+                { id: 9, type: "tf", question: "لإدراج صورة في ملف Excel يتم الضغط على Insert ثم Picture ثم نختار الصورة.", answer: true, explanation: "خطوات صحيحة لإدراج الصور." },
+                { id: 10, type: "tf", question: "لإدراج معادلة في برنامج Excel تضغط على Home ثم Equation.", answer: false, explanation: "إدراج المعادلات يتم من قائمة Insert وليس Home." },
+                { id: 11, type: "tf", question: "لا يمكن إدراج رسم بياني في برنامج بوربوينت.", answer: false, explanation: "يمكن إدراج Charts من قائمة Insert." },
+                { id: 12, type: "tf", question: "يمكن لمستخدم برنامج Excel التعامل مع العديد من الدوال ذات التطبيقات المختلفة.", answer: true, explanation: "إكسيل يحتوي على مئات الدوال المتنوعة." },
+                { id: 13, type: "tf", question: "يمكن تشغيل أكثر من برنامج في نفس الوقت مع نظام التشغيل Windows.", answer: true, explanation: "ويندوز نظام متعدد المهام (Multitasking)." },
+                { id: 14, type: "tf", question: "لعمل شكل بياني في صورة أعمدة تضغط على Home ثم Column.", answer: false, explanation: "يتم ذلك من قائمة Insert." },
+                { id: 15, type: "tf", question: "يمكن تغيير شكل الشريحة في PowerPoint بالضغط على Home ثم Layout واختيار الشكل.", answer: true, explanation: "تغيير التخطيط يتم من تبويب Home." },
+                { id: 16, type: "tf", question: "أدوات الإخراج تضم الشاشة - السماعات - الراسم - الطابعة.", answer: true, explanation: "كلها وحدات لإخراج البيانات." },
+                { id: 17, type: "tf", question: "البرامج هي مجموعة من التعليمات التي تم تصميمها لتعطي أوامر للحاسب كيف يؤدي مهمة معينة.", answer: true, explanation: "تعريف صحيح للبرمجيات (Software)." },
+                { id: 18, type: "tf", question: "تعتبر الحاسبات ماكينات لمعالجة البيانات مهما اختلف الحجم والإمكانيات.", answer: true, explanation: "الوظيفة الأساسية هي المعالجة." },
+                { id: 19, type: "tf", question: "معالج النصوص، الجداول الحسابية، وقواعد البيانات ونظام التشغيل هي من برامج التطبيقات.", answer: false, explanation: "نظام التشغيل هو System Software وليس Application Software." },
+                { id: 20, type: "tf", question: "المعلومات عبارة عن مجموعة من البيانات غير المرتبة ومعدة للاستخدام.", answer: false, explanation: "البيانات هي التي تكون غير مرتبة، المعلومات هي ناتج المعالجة." },
+                { id: 21, type: "tf", question: "المكونات المادية تشمل أدوات الإدخال والإخراج ووسائط التخزين ووحدة المعالجة واللوحة الأم.", answer: true, explanation: "هذه هي الـ Hardware." },
+                { id: 22, type: "tf", question: "تقاس سرعة المعالج بوحدة الميجابايت.", answer: false, explanation: "تقاس بالهرتز (Hertz)، الميجابايت للسعة." },
+                { id: 23, type: "tf", question: "من أنواع الحاسب الآلي: الشخصي، المحمول، الكفي، الشبكات.", answer: false, explanation: "الشبكات نظام ربط وليست نوعاً من أنواع الحاسب." },
+                { id: 24, type: "tf", question: "الجيجابايت (GB) تساوي 1024 كيلوبايت (KB).", answer: false, explanation: "الجيجابايت = 1024 ميجابايت (MB)." },
+                { id: 25, type: "tf", question: "في برنامج وورد يمكن اختيار اتجاه الصفحة من قائمة Home.", answer: false, explanation: "من قائمة Page Layout (تخطيط الصفحة)." },
+                { id: 26, type: "tf", question: "الذاكرة العشوائية RAM لا تفقد بياناتها مع إغلاق جهاز الكمبيوتر.", answer: false, explanation: "RAM ذاكرة متطايرة تفقد بياناتها بانقطاع الكهرباء." },
+                { id: 27, type: "tf", question: "من قائمة إدراج (Insert) يمكن إدراج ملفات صوت أو فيديو.", answer: true, explanation: "قائمة Insert تحتوي على خيارات الوسائط." },
+                { id: 28, type: "tf", question: "يتم البحث عن كلمة في مستند وورد باستخدام الأمر Replace.", answer: false, explanation: "للبحث نستخدم Find، أما Replace فهو للاستبدال." },
+                { id: 29, type: "tf", question: "يستخدم برنامج وورد في كتابة النصوص وإدراج الجداول والصور.", answer: true, explanation: "وظائف أساسية لمعالج النصوص." },
+                { id: 30, type: "tf", question: "يعتبر القرص الصلب من وحدات إدخال وإخراج البيانات.", answer: false, explanation: "يعتبر وحدة تخزين (Storage)." },
+                { id: 31, type: "tf", question: "في ورقة إكسيل يمكن إيجاد مجموع الأرقام من قائمة Home والضغط على AutoSum.", answer: true, explanation: "أسرع طريقة للجمع." },
+                { id: 32, type: "tf", question: "في برنامج وورد يمكن تقسيم الصفحة إلى أعمدة باستخدام الأمر Columns من قائمة Page Layout.", answer: true, explanation: "صحيح." },
+                { id: 33, type: "tf", question: "يمكن حذف صف أو عمود من جدول في وورد بالضغط على Delete من قائمة Layout.", answer: true, explanation: "صحيح من أدوات الجدول." },
+                { id: 34, type: "tf", question: "يمكن إضافة صف أو عمود في إكسيل بالضغط على Insert من قائمة Page Layout.", answer: false, explanation: "من قائمة Home أو بالنقر الأيمن." },
+                { id: 35, type: "tf", question: "يمكن حذف كلمة أو جملة في وورد بالضغط على أداة Cut من قائمة Home.", answer: false, explanation: "Cut تنقل النص للحافظة، للحذف نستخدم Delete." },
+                { id: 36, type: "tf", question: "يمكن إدراج رسم بياني في بوربوينت بالضغط على Home ثم Chart.", answer: false, explanation: "من قائمة Insert." },
+                { id: 37, type: "tf", question: "في برنامج وورد يمكن ضبط أبعاد الصفحة بالضغط على Page Layout ثم Size.", answer: true, explanation: "صحيح." },
+                { id: 38, type: "tf", question: "في برنامج وورد يمكن تغيير حجم الخط من قائمة [Home] ثم الضغط على Font Size.", answer: true, explanation: "صحيح." },
+                { id: 39, type: "tf", question: "في برنامج إكسيل يمكن اختيار اتجاه الصفحة من قائمة Page Layout.", answer: true, explanation: "صحيح." },
+                { id: 40, type: "tf", question: "الذاكرة الثابتة (RAM) هي الذاكرة العاملة ويمكن تغييرها والكتابة عليها.", answer: false, explanation: "RAM ليست ذاكرة ثابتة (بل عشوائية)، الثابتة هي ROM." },
+                { id: 41, type: "tf", question: "في برنامج وورد يمكن اختيار شكل معين من قائمة Home ثم الضغط على Shapes.", answer: false, explanation: "Shapes في قائمة Insert." },
+                { id: 42, type: "tf", question: "يعتبر برنامج الجداول البيانية من نظم التشغيل.", answer: false, explanation: "هو برنامج تطبيقي." },
+                { id: 43, type: "tf", question: "المراحل التي تمر بها البيانات حتى تتحول لمعلومات هي: استقبال - معالجة - إخراج.", answer: true, explanation: "دورة المعالجة الصحيحة." },
+                { id: 44, type: "tf", question: "يمكن اختيار تخطيط الشريحة من قائمة Home.", answer: true, explanation: "صحيح." },
+                { id: 45, type: "tf", question: "يمكن إدراج رأس الصفحة بالضغط على Home ثم Insert Header.", answer: false, explanation: "من قائمة Insert." },
+                { id: 46, type: "tf", question: "يمكن إدراج ملف فيديو في بوربوينت بالضغط على Insert ثم Video.", answer: true, explanation: "صحيح." },
+                { id: 47, type: "tf", question: "برامج التشغيل وبرامج التطبيقات تقوم بنفس العمل.", answer: false, explanation: "التشغيل يدير الجهاز، التطبيقات تخدم المستخدم." },
+                { id: 48, type: "tf", question: "في برنامج إكسيل لا يمكن التحكم في حجم الخلايا.", answer: false, explanation: "يمكن التحكم في عرض الأعمدة وارتفاع الصفوف." },
+                { id: 49, type: "tf", question: "يعتبر الماسح الضوئي من وحدات إدخال البيانات.", answer: true, explanation: "يدخل الصور والمستندات." },
+                { id: 50, type: "tf", question: "يمكن حذف صف أو عمود في إكسيل باختيار Delete من قائمة Home.", answer: true, explanation: "صحيح." },
+                { id: 52, type: "tf", question: "شريط العنوان يحتوي على اسم الملف الحالي وقائمة الإدراج Insert.", answer: false, explanation: "يحتوي الاسم فقط، القوائم في الشريط السفلي." },
+                { id: 53, type: "tf", question: "يمكن اعتبار المعلومات المخزنة على الأسطوانة CD تخزين دائم لا يمكن إزالته.", answer: true, explanation: "CD-R يكتب مرة واحدة." },
+                { id: 54, type: "tf", question: "يمكن اعتبار المودم من أجهزة الإدخال فقط.", answer: false, explanation: "هو جهاز إدخال وإخراج." },
+                { id: 55, type: "tf", question: "يوجد فرق في استخدام الأمر Save والأمر Save As.", answer: true, explanation: "Save للحفظ الحالي، Save As لنسخة جديدة." },
+                { id: 56, type: "tf", question: "عند إغلاق الكمبيوتر يتم تفريغ الذاكرة العشوائية RAM.", answer: true, explanation: "لأنها متطايرة." },
+                { id: 57, type: "tf", question: "الأمر Copy والأمر Cut يقومان بنفس الوظيفة.", answer: false, explanation: "Copy ينسخ، Cut يقص (ينقل)." },
+                { id: 58, type: "tf", question: "يمكن حساب متوسط القيم في إكسيل باختيار Home ثم AutoSum ثم Average.", answer: true, explanation: "صحيح." },
+                { id: 59, type: "tf", question: "يحتوي شريط القوائم على Save, File, Insert, View.", answer: false, explanation: "Save أيقونة وليست قائمة." },
+                { id: 61, type: "tf", question: "يمكن تشغيل أكثر من برنامج وأكثر من مستخدم في نظام ويندوز.", answer: true, explanation: "صحيح." },
+                { id: 62, type: "tf", question: "سعة تخزين القرص المدمج أكبر من سعة تخزين الفلاشة.", answer: false, explanation: "الفلاشة أكبر بكثير." },
+                { id: 63, type: "tf", question: "يمكن فتح أي برنامج بالضغط على Start ثم اختيار البرنامج.", answer: true, explanation: "صحيح." },
+                { id: 64, type: "tf", question: "عند فتح برنامج بوربوينت يحتوي الملف على عدد من الشرائح ويمكن زيادتها.", answer: true, explanation: "صحيح." },
+                { id: 65, type: "tf", question: "يتميز الجيل الرابع من الحاسبات باستخدام تكنولوجيا الدوائر المتكاملة.", answer: false, explanation: "الجيل الثالث هو من استخدم الدوائر المتكاملة." },
+                { id: 66, type: "tf", question: "لعمل شكل بياني (منحنى) نضغط Insert ثم Line.", answer: true, explanation: "صحيح." },
+                { id: 67, type: "tf", question: "يمكن إدراج معادلة رياضية في إكسيل من قائمة Home.", answer: false, explanation: "من قائمة Insert." },
+                { id: 68, type: "tf", question: "يمكن تحديد حجم الصفحة والهوامش من قائمة Layout.", answer: true, explanation: "صحيح." },
+                { id: 69, type: "tf", question: "يمكن إدراج تعليقات بالضغط على Review ثم New Comment.", answer: true, explanation: "صحيح." },
+                { id: 70, type: "tf", question: "في برنامج وورد ظهور خط أحمر أسفل الكلمة يعني خطأ في الكتابة.", answer: true, explanation: "يعني خطأ إملائي." },
 
-<div id="scoreModal" class="score-modal">
-    <div class="score-content">
-        <h2>نتيجتك</h2>
-        <div class="score-number" id="finalScore">0 / 0</div>
-        <p id="scoreMessage"></p>
-        <button class="nav-btn" onclick="closeModal()">مراجعة الإجابات</button>
-    </div>
-</div>
+                // --- اختيار من متعدد 2022 ---
+                { id: 71, type: "mcq", question: "البيانات المخزنة على الأسطوانة المدمجة (CD) تعتبر:", options: ["ذاكرة دائمة وللقراءة فقط", "ذاكرة مؤقتة وللقراءة فقط", "ذاكرة مؤقتة وقراءة وكتابة", "ذاكرة دائمة وقراءة وكتابة"], answer: 0, explanation: "بمجرد النسخ تصبح دائمة للقراءة فقط." },
+                { id: 72, type: "mcq", question: "تستخدم وحدة المعالجة المركزية CPU في:", options: ["التخزين", "التصفح", "الشبكات", "العمليات الحسابية"], answer: 3, explanation: "وظيفة المعالج إجراء العمليات الحسابية والمنطقية." },
+                { id: 73, type: "mcq", question: "الترتيب الصحيح لمقدار سعة وسيلة التخزين بدءاً من الأصغر:", options: ["CD-DVD-HDD-Floppy", "HDD-DVD-CD-Floppy", "القرص المرن - CD - DVD - القرص الصلب", "DVD-CD-Floppy-HDD"], answer: 2, explanation: "Floppy < CD < DVD < HDD" },
+                { id: 74, type: "mcq", question: "أي مما يلي يعتبر مثال للبرنامج:", options: ["برامج التشغيل", "الشاشة", "بطاقة الصوت", "المودم"], answer: 0, explanation: "نظام التشغيل برمجيات، الباقي أجهزة." },
+                { id: 75, type: "mcq", question: "أي من الأجهزة التالية يعتبر جهاز إدخال وإخراج:", options: ["لوحة المفاتيح", "المودم", "الفأرة", "السماعات"], answer: 1, explanation: "المودم يرسل ويستقبل البيانات." },
+                { id: 76, type: "mcq", question: "أي من البرامج التالية يعتبر نظام تشغيل:", options: ["ويندوز 10", "وورد", "إكسيل", "باوربوينت"], answer: 0, explanation: "ويندوز هو نظام التشغيل." },
+                { id: 77, type: "mcq", question: "يحفظ نظام تشغيل الكمبيوتر في:", options: ["RAM", "ROM", "القرص الصلب (Hard Disk)", "CD"], answer: 2, explanation: "يخزن بشكل دائم على القرص الصلب." },
+                { id: 78, type: "mcq", question: "من أجهزة الإدخال:", options: ["الشاشة", "الفأرة", "السماعات", "الطابعة"], answer: 1, explanation: "الفأرة للإدخال، الباقي إخراج." },
+                { id: 79, type: "mcq", question: "أي من البرامج التالية يستخدم في إدارة الملفات على الحاسوب:", options: ["وورد", "إكسيل", "نظام التشغيل", "الرسام"], answer: 2, explanation: "إدارة الملفات وظيفة نظام التشغيل." },
+                { id: 80, type: "mcq", question: "أي من الأجهزة التالية يعتبر جهاز إخراج:", options: ["الفأرة", "المايكروفون", "السماعات", "لوحة المفاتيح"], answer: 2, explanation: "السماعات تخرج الصوت." },
+                { id: 81, type: "mcq", question: "أي من الأجهزة التالية يعتبر جهاز إدخال:", options: ["الشاشة", "الميكروفون", "السماعات", "الطابعة"], answer: 1, explanation: "الميكروفون يدخل الصوت." },
+                { id: 82, type: "mcq", question: "يحتوي البايت الواحد (Byte) على:", options: ["2 بت", "4 بت", "8 بت", "16 بت"], answer: 2, explanation: "1 بايت = 8 بت." },
+                { id: 83, type: "mcq", question: "لتغيير حجم الصورة:", options: ["تغيير الأبعاد", "السحب", "كل ما سبق", "لا شيء"], answer: 2, explanation: "يمكن يدوياً أو بالأرقام." },
+                { id: 84, type: "mcq", question: "المصطلح CPU يشير إلى:", options: ["وحدة التخزين", "وحدة العرض", "معالج الكمبيوتر", "الذاكرة"], answer: 2, explanation: "Central Processing Unit" },
+                { id: 85, type: "mcq", question: "يمكن معرفة اسم الملف الحالي أو النافذة المفتوحة من خلال:", options: ["شريط العنوان", "شريط الحالة", "شريط الأدوات", "شريط القوائم"], answer: 0, explanation: "Title Bar يظهر الاسم." },
+                { id: 86, type: "mcq", question: "للقيام بنقل / قص مجلد من مكان لآخر نختار الأمر:", options: ["Copy", "Cut", "Paste", "Delete"], answer: 1, explanation: "Cut للنقل." },
+                { id: 87, type: "mcq", question: "الذاكرة التي تفقد بياناتها في حالة انقطاع التيار الكهربي:", options: ["RAM", "ROM", "HDD", "DVD"], answer: 0, explanation: "RAM ذاكرة متطايرة." },
+                { id: 88, type: "mcq", question: "لحذف ملف أو مجلد نضغط الزر الأيمن ثم أمر:", options: ["Copy", "Cut", "Delete", "Rename"], answer: 2, explanation: "Delete للحذف." },
+                { id: 89, type: "mcq", question: "لفتح ملف معين نضغط الزر الأيمن ثم أمر:", options: ["Copy", "Cut", "Open", "New"], answer: 2, explanation: "Open للفتح." },
+                { id: 90, type: "mcq", question: "عند الرغبة في عرض البيانات على شكل رسوم بيانية ببرنامج إكسيل يتم إدراج:", options: ["صورة", "جدول", "معادلة", "تخطيط (Chart)"], answer: 3, explanation: "Chart هو الرسم البياني." },
+                { id: 91, type: "mcq", question: "أي من البرامج التالية يستخدم في العمليات الحسابية:", options: ["وورد", "بوربوينت", "أكسس", "إكسيل"], answer: 3, explanation: "إكسيل متخصص في الحسابات." },
+                { id: 92, type: "mcq", question: "تميز الجيل الأول من الحاسبات بوجود:", options: ["الترانزستور", "الصمامات المفرغة", "الدوائر المتكاملة", "المعالج"], answer: 1, explanation: "الجيل الأول = صمامات مفرغة." },
+                { id: 93, type: "mcq", question: "من أنواع البيانات التي يتعامل معها الكمبيوتر:", options: ["الصور", "الصوت", "النصوص", "كل ما سبق"], answer: 3, explanation: "يتعامل مع جميع الوسائط." },
+                { id: 94, type: "mcq", question: "من أنواع أنظمة التشغيل للحاسب:", options: ["وحيد المهام", "وحيد المستخدم", "متعدد المستخدمين ومتعدد المهام", "لا شيء"], answer: 2, explanation: "مثل ويندوز." },
+                { id: 95, type: "mcq", question: "من وسائط التخزين:", options: ["القرص الصلب", "DVD", "الفلاشة", "كل ما سبق"], answer: 3, explanation: "كلها وسائل تخزين." },
 
-<script>
-    // --- Data: Exam Questions ---
-    const examData2024 = [
-        // --- Section 1: Word Ribbon (Requires Image 1) ---
-        {
-            id: 71,
-            sectionImage: "img1.jpg", // ضع صورة شريط الأدوات بهذا الاسم
-            question: "71- يمكن إدراج معادلات رياضية عند الضغط على أيقونة السهم رقم:",
-            options: ["16", "12", "13", "11"],
-            correct: 3, // Index 3 = "11"
-            explanation: "الإجابة الصحيحة: d) 11 (تشير إلى أيقونة Equation)"
-        },
-        { id: 72, question: "72- يمكن إدراج موقع على الانترنت (Hyperlink) عند الضغط على أيقونة السهم رقم:", options: ["16", "12", "13", "15"], correct: 1, explanation: "الإجابة الصحيحة: b) 12" },
-        { id: 73, question: "73- يمكن إدراج أرقام الصفحات عند الضغط على أيقونة السهم رقم:", options: ["16", "14", "13", "15"], correct: 2, explanation: "الإجابة الصحيحة: c) 13" },
-        { id: 74, question: "74- يمكن إدراج رسم بياني (Chart) عند الضغط على أيقونة السهم رقم:", options: ["19", "17", "18", "15"], correct: 2, explanation: "الإجابة الصحيحة: c) 18" },
-        { id: 75, question: "75- يمكن إدراج الرموز (Symbols) عند الضغط على أيقونة السهم رقم:", options: ["16", "7", "19", "15"], correct: 2, explanation: "الإجابة الصحيحة: c) 19" },
-        { id: 76, question: "76- يمكن إدراج أغلفة للتقارير (Cover Page) عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "15"], correct: 0, explanation: "الإجابة الصحيحة: a) 6" },
-        { id: 77, question: "77- يمكن إدراج جدول مكون من 3 أعمدة و 4 صفوف عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "3", "15"], correct: 1, explanation: "الإجابة الصحيحة: b) 7" },
-        { id: 78, question: "78- يمكن إدراج صورة عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "15"], correct: 2, explanation: "الإجابة الصحيحة: c) 8" },
-        { id: 79, question: "79- يمكن إدراج فواصل بين الصفحات (Page Break) عند الضغط على أيقونة السهم رقم:", options: ["6", "3", "8", "15"], correct: 1, explanation: "الإجابة الصحيحة: b) 3" },
-        { id: 81, question: "81- يمكن إدراج عمود يمكن الكتابة فيه (Text Box) عند الضغط على أيقونة السهم رقم:", options: ["16", "18", "15", "17"], correct: 2, explanation: "الإجابة الصحيحة: c) 15" },
-        { id: 82, question: "82- يمكن كتابة عنوان في الهامش العلوي لكل الصفحات (Header) عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "12", "14"], correct: 3, explanation: "الإجابة الصحيحة: d) 14" },
-        { id: 83, question: "83- يمكن إدراج الوقت والتاريخ عند الضغط على أيقونة السهم رقم:", options: ["12", "17", "13", "14"], correct: 1, explanation: "الإجابة الصحيحة: b) 17" },
-        { id: 84, question: "84- يمكن كتابة عنوان في الهامش السفلي لكل الصفحات (Footer) عند الضغط على أيقونة السهم رقم:", options: ["16", "17", "18", "14"], correct: 0, explanation: "الإجابة الصحيحة: a) 16" },
-        { id: 85, question: "85- يمكن إدراج مربع أو دائرة (Shapes) عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "5"], correct: 2, explanation: "الإجابة الصحيحة: c) 8 (أو حسب الأيقونة الظاهرة للأشكال)" },
+                // --- أسئلة مقالية 2022 (للعرض فقط) ---
+                { id: 1001, type: "essay", question: "ما هي أنواع الحاسب الآلي؟", answer: "1. الحاسب الشخصي (PC)\n2. الحاسب المحمول (Laptop)\n3. الحاسب الخادم (Server)\n4. الحاسب العملاق (Super Computer)\n5. الحاسب اللوحي (Tablet)" },
+                { id: 1002, type: "essay", question: "ما هي مراحل معالجة البيانات؟", answer: "1. الإدخال (Input)\n2. المعالجة (Processing)\n3. الإخراج (Output)\n4. التخزين (Storage)" },
+                { id: 1003, type: "essay", question: "ما الفرق بين Cut و Copy؟", answer: "Cut (قص): ينقل الملف من مكانه الأصلي (يختفي).\nCopy (نسخ): ينشئ نسخة مطابقة مع بقاء الأصل." }
+            ],
+            "old": [
+                // --- أسئلة سابقة مميزة (2020/2019) ---
+                { id: 1, type: "tf", question: "برنامج البوربوينت يتيح للمستخدم نسخ النصوص فقط ولا يسمح بنسخ الصور.", answer: false, explanation: "يسمح بنسخ النصوص والصور والأشكال." },
+                { id: 2, type: "tf", question: "للتحكم في عرض الشرائح في بوربوينت نضغط على Transition ثم اختيار الطريقة.", answer: true, explanation: "للتحكم في الانتقالات." },
+                { id: 3, type: "tf", question: "يعتبر الماسح الضوئي من وحدات إدخال البيانات.", answer: true, explanation: "يقوم بإدخال الصور." },
+                { id: 4, type: "tf", question: "يمكن إدراج شريحة جديدة في بوربوينت بالضغط على New Slide.", answer: true, explanation: "صحيح." },
+                { id: 5, type: "tf", question: "في برنامج وورد يمكن تغيير حجم الخط من قائمة Font Size.", answer: true, explanation: "صحيح." },
+                { id: 6, type: "tf", question: "يعتبر نظام التشغيل من برامج الجداول الحسابية.", answer: false, explanation: "نظام التشغيل يدير الجهاز، الجداول الحسابية تطبيق." },
+                { id: 7, type: "tf", question: "تقنية المعلومات (IT) هي استخدام الحاسوب في إدارة البيانات والاتصالات.", answer: true, explanation: "تعريف صحيح." },
+                
+                { id: 8, type: "mcq", question: "الحاسبات المستخدمة بالمنزل عموماً هي:", options: ["الحاسب الخادم", "الحاسب الشخصي (PC)", "الحاسب العملاق", "محطة عمل"], answer: 1, explanation: "PC هو الأكثر استخداماً في المنازل." },
+                { id: 9, type: "mcq", question: "أي من البرامج التالية يستخدم في إجراء الحسابات المنزلية أو الشركات:", options: ["وورد", "برامج جداول البيانات (Excel)", "بوربوينت", "الرسام"], answer: 1, explanation: "إكسيل للحسابات." },
+                { id: 10, type: "mcq", question: "أي من الأجهزة التالية ضروري لاستخدام الحاسب الشخصي:", options: ["الطابعة", "الماسح الضوئي", "السماعات", "نظام التشغيل"], answer: 3, explanation: "لا يعمل الجهاز بدون نظام تشغيل." },
+                { id: 11, type: "mcq", question: "لترقيم صفحات المستند نختار أمر:", options: ["Header", "Footer", "Date", "Page Number"], answer: 3, explanation: "Page Number لترقيم الصفحات." },
+                { id: 12, type: "mcq", question: "في حالة وجود خطأ إملائي في كلمة ببرنامج وورد يظهر تحتها خط:", options: ["أحمر", "أخضر", "أزرق", "أصفر"], answer: 0, explanation: "الأحمر للأخطاء الإملائية." }
+            ]
+        };
 
-        // --- Section 2: Outlook (Requires Image 2) ---
-        {
-            id: 86,
-            sectionImage: "img2.jpg", // ضع صورة Outlook بهذا الاسم
-            question: "86- عدد الرسائل الواردة (Inbox) في الشكل التالي:",
-            options: ["5210", "3210", "2416", "116"],
-            correct: 2,
-            explanation: "الإجابة الصحيحة: c) 2416"
-        },
-        { id: 87, question: "87- عدد الرسائل التي تم مسحها (Deleted Items) في الشكل التالي:", options: ["5210", "44", "17", "84"], correct: 1, explanation: "الإجابة الصحيحة: b) 44" },
-        { id: 88, question: "88- عدد الرسائل التي تم إرسالها (Sent Items) في الشكل التالي:", options: ["5210", "188", "17", "84"], correct: 1, explanation: "الإجابة الصحيحة: b) 188" },
-
-        // --- Section 3: General & Excel ---
-        { id: 89, question: "89- عند الضغط على CTRL + C لملف ورد:", options: ["يتم قص الملف", "يتم نسخ الملف", "يتم فتح ملف جديد", "يتم عمل غلاف للمستند"], correct: 1, explanation: "الإجابة الصحيحة: ب) يتم نسخ الملف" },
-        { id: 90, question: "90- يستخدم شريط الصيغة في برنامج الأكسيل في:", options: ["يتم تحديد المستند", "تظهر عنوان الخلية", "كتابة المعادلات أو الدوال", "يتم فتح ملف جديد"], correct: 2, explanation: "الإجابة الصحيحة: ج) كتابة المعادلات أو الدوال" },
-        { id: 91, question: "91- عند الضغط على Wrap text في برنامج الأكسيل يمكن:", options: ["أدراج صورة", "الكتابه في الخلية الواحده اكثر من سطر", "كلمة واحدة", "أدراج جدول"], correct: 1, explanation: "الإجابة الصحيحة: ب) الكتابه في الخلية الواحده اكثر من سطر" },
-        { id: 92, question: "92- عند الضغط على أيقونة WordArt يمكن أدراج:", options: ["جدول", "فواصل بين الصفحات", "غلاف للمستند", "خطوط ملونة زاهية"], correct: 3, explanation: "الإجابة الصحيحة: د) خطوط ملونة زاهية" },
-        { id: 93, question: "93- يعتبر برنامج مايكروسوفت باوربوينت من البرامج البسيطة والفعالة في:", options: ["أعداد العروض التفاعلية", "لتجميل الملف", "لتنسيق كتب", "رسم جداول"], correct: 0, explanation: "الإجابة الصحيحة: أ) أعداد العروض التفاعلية" },
-
-        // --- Section 4: Page Layout (Requires Image 3) ---
-        {
-            id: 94,
-            sectionImage: "img3.jpg", // صورة Page Layout
-            question: "94- يمكن ادراج علامة مائية عند الضغط على أيقونة السهم رقم:",
-            options: ["6", "7", "8", "5"],
-            correct: 0,
-            explanation: "الإجابة الصحيحة: a) 6 (Watermark)"
-        },
-        { id: 95, question: "95- يمكن أدراج المسافات بين الأسطر (Spacing) عند الضغط على أيقونة السهم رقم:", options: ["6", "2", "8", "5"], correct: 1, explanation: "الإجابة الصحيحة: b) 2" },
-        { id: 96, question: "96- يمكن تغيير لون الورقة (Page Color) عند الضغط على أيقونة السهم رقم:", options: ["6", "3", "7", "5"], correct: 2, explanation: "الإجابة الصحيحة: c) 7" },
-        { id: 97, question: "97- يمكن تغيير الهوامش (Margins) عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "3"], correct: 3, explanation: "الإجابة الصحيحة: d) 3" },
-        { id: 98, question: "98- يمكن تغيير حجم الورقة (Size) عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "4", "5"], correct: 2, explanation: "الإجابة الصحيحة: c) 4 (Size)" },
-        { id: 99, question: "99- يمكن أدراج عدد الأسطر (Line Numbers) عند الضغط على أيقونة السهم رقم:", options: ["6", "7", "8", "5"], correct: 3, explanation: "الإجابة الصحيحة: d) 5" },
-        { id: 100, question: "100- مايكروسوفت إكسل هو برنامج متخصص يستخدم في:", options: ["أنشاء الجداول الحسابية", "عمل الحسابات", "رسم المخططات البيانية", "كل ما سبق"], correct: 3, explanation: "الإجابة الصحيحة: د) كل ما سبق" },
-
-        // --- Section 5: Excel Functions (Requires Image 4) ---
-        {
-            id: 101,
-            sectionImage: "img4.jpg", // صورة Excel Formula Bar
-            question: "101- السهم رقم 1 يشير الى:",
-            options: ["الخانة الخاصة بكتابة المعادلة", "عنوان الخلية", "نوع المعادلة", "أدراج أو أزاله صف"],
-            correct: 0,
-            explanation: "الإجابة الصحيحة: أ) الخانة الخاصة بكتابة المعادلة"
-        },
-        { id: 102, question: "102- السهم رقم 2 يشير الى:", options: ["الخانة الخاصة بكتابة المعادلة", "عنوان الخلية (Name Box)", "نوع المعادلة", "أدراج أو أزاله صف"], correct: 1, explanation: "الإجابة الصحيحة: ب) عنوان الخلية" },
-        { id: 103, question: "103- أي من المعادلات التالية تمثل دالة COUNTIF الصحيحة؟", options: [')=COUNTIF(SBS2:SBS21,">0")', '=COUNTIF($B$2:$B$21,">0")', '=COUNTIF($B$2:$B$21">0")', '=COUNTIF($B$2:$B$21, >0)'], correct: 1, explanation: "الإجابة الصحيحة: b" },
-        { id: 104, question: "104- أي من المعادلات التالية تمثل دالة LARGE الصحيحة؟", options: ['=LARG ($B$2:$B$20,4)', '=LARGE$B$2:$B$20,4)X', '=LARGE($B$2:$B$20,4)', 'LARGE($B$2:$B$20,4)'], correct: 2, explanation: "الإجابة الصحيحة: c" },
-        { id: 105, question: "105- أي من المعادلات التالية تمثل دالة COUNTBLANK الصحيحة؟", options: ['=COUNTBLANK(D2:D21)', 'COUNTBLANK(D2:D21)', '=COUNTBLANK(D2D21)/', '=COUNTBLANK(D2:D21 X'], correct: 0, explanation: "الإجابة الصحيحة: a" },
-        { id: 106, question: "106- أي من المعادلات التالية تمثل دالة SMALL الصحيحة؟", options: ['=SMAL ($B$2:$B$21,3)', 'SMALL($B$2:$B$21,3)', '=SMALL($B$2:$B$21,3)', '=SMALL( B$2:$B$21,3)'], correct: 2, explanation: "الإجابة الصحيحة: c" },
-        { id: 107, question: "107- في المعادلة IF(B2>=90... الطالب الحاصل على 52 درجة:", options: ["A+", "B+", "C+", "F"], correct: 2, explanation: "الإجابة الصحيحة: c) C+ (لأن 52 أكبر من 50 وأقل من 80)" },
-        { id: 108, question: "108- في المعادلة السابقة الطالب الحاصل على 90 درجة:", options: ["A+", "B+", "C+", "F"], correct: 0, explanation: "الإجابة الصحيحة: a) A+" },
-
-        // --- Section 6: True/False ---
-        { id: 109, question: "من أهم برمجيات انظمه التشغيل ويندوز او اندرويد و Microsoft office.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - الأوفيس برامج تطبيقية وليس نظام تشغيل" },
-        { id: 110, question: "يمكن استخدام جهاز الحاسب الآلي بدون تحميل برمجيات أنظمة التشغيل.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ" },
-        { id: 111, question: "البرنامج هو مجموعة مرتبة من التعليمات مكتوبة بأحد لغات البرمجة.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 112, question: "End User هو الشخص المستخدم النهائي للحاسب.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 113, question: "Network هي مجموعة من الحواسيب المرتبطة مع بعضها والتي لا يمكن مشاركة البيانات...", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - الشبكة تسمح بالمشاركة" },
-        { id: 114, question: "Internet هي أكبر شبكة للحاسبات في العالم، للتواصل مع ملايين المستخدمين.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 115, question: "Algorithm سميت الخوارزمية بهذا الاسم نسبة إلى البلد الذي نشأت فيه.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - نسبة للعالم الخوارزمي" },
-        { id: 116, question: "يستخدم حساس درجة الحرارة في التكييف في المهمة الأولى من معالجة الكمبيوتر للمعلومات (الإدخال).", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 117, question: "المعالجة Data processing هي عملية تحويل درجة الحرارة المقاسة الى صورة رقمية.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 118, question: "Motherboard هو الجزء الرئيسي التي يتم توصيل فيها جميع القطع الأخرى بالكمبيوتر.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 119, question: "Processor يحتوي علي وحدة تحكم فقط.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - يحتوي على وحدة الحساب والمنطق أيضاً" },
-        { id: 120, question: "وحدة التحكم في المعالج يمكن من خلالها اصدار الأوامر في جميع اقسام الحاسب.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 121, question: "يستخدم القرص الصلب في تخزين المعلومات والبيانات بصورة مؤقتة لا دائمه.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - تخزين دائم" },
-        { id: 122, question: "تم اختراع الحاسب الآلي في القرن الثامن عشر.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ" },
-        { id: 123, question: "الجيل الثاني للكمبيوتر كان عام 1965.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ" },
-        { id: 124, question: "يعتبر الحاسب الآلي المحمول (Laptop) الكمبيوتر الاكثر استخداما في العالم.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 125, question: "الحاسب الآلي اللوحي يستخدم نظام تشغيل ويندوز او نظام تشغيل الاندرويد.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 126, question: "يستخدم السيرفر في تشغيل عدد كبير من الحاسبات الشخصية والتنسيق فيما بينهم.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 127, question: "تتم معالجة الكمبيوتر للمعلومات على ثلاث خطوات (إدخال - معالجة - إخراج).", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 128, question: "تتم المهمة الثانية لمعالجة المعلومات في القرص الصلب Hard Disk.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - في المعالج Processor" },
-        { id: 129, question: "Data هي المعلومات والبيانات التي يتم أدخالها للحاسب الألي تمهيداً لبدء المعالجة.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 130, question: "Data output هي عملية الاحتفاظ بالبيانات في الذاكرة الخاصة بالكمبيوتر.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - هذا تعريف التخزين" },
-        { id: 131, question: "يفقد الرام (RAM) جميع المعلومات الموجودة داخلها عند عمل ريستارت.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 132, question: "يستخدم برنامج Microsoft teams في انشاء فصل تفاعلي.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 133, question: "جهاز كمبيوتر PC هو أكثر عملية لأنه تم دمج الأجزاء الكبيرة في أجزاء صغيرة يمكن حملها.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - هذا تعريف اللابتوب" },
-        { id: 134, question: "عند توقف السيرفر الخاص بشركة جوجل فلن تتوقف خدمة الأنترنت في مصر.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ" },
-        { id: 135, question: "الروم ROM تفقد المعلومات المخزنة داخلها عند عمل ريستارت.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - لا تفقد البيانات" },
-        { id: 136, question: "يتكون السيرفر من أجهزه كمبيوتر ذات سعة تخزينية منخفضة.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - سعة عالية" },
-        { id: 137, question: "تعتبر شاشة الموبايل والتاب Touch screen من وحدات الأخراج فقط.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - إدخال وإخراج" },
-        { id: 138, question: "يعتبر تصميم برنامج لتصنيف الطلاب الي راسب وناجح خوارزمية.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 139, question: "يختص (Outlook) بالإيميل الخاص بالطالب.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 140, question: "يستخدم (One Drive) في عمل محاضرة تفاعلية مع الطلبة.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - للتخزين" },
-        { id: 141, question: "يمكن ارسال رساله بريد الكتروني بالضغط على أيقونة Inbox.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - Inbox للوارد" },
-        { id: 142, question: "عند النقر فوق CTRL + A يمكن تحديد أول سطر من المستند في برنامج word.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - تحديد الكل" },
-        { id: 143, question: "Junk Emails يجب مسحها والتخلص منها نهائيا.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 144, question: "لا يوجد فرق بين الضغط علي Save و Save as في برنامج Word.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ" },
-        { id: 145, question: "كلما قمت بنسخ أي شيء في MS Word، يتم إرساله تلقائيا إلى الحافظة Clipboard.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-        { id: 146, question: "يستخدم الرمز CTRL + X في نسخ Copy.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ - للقص" },
-        { id: 147, question: "تستخدم قائمة Find and replace في البحث عن وظيفة.", options: ["صح", "خطأ"], correct: 1, explanation: "خطأ" },
-        { id: 148, question: "Save يحفظ تغيرات في الملف الحالي بنفس الاسم والمكان.", options: ["صح", "خطأ"], correct: 0, explanation: "صح" },
-    ];
-
-    let currentScore = 0;
-    let answeredQuestions = new Set();
-
-    function initExam() {
-        const container = document.getElementById('exam2024');
-        container.innerHTML = '';
+        const container = document.getElementById('quiz-container');
+        const resultDisplay = document.getElementById('result-display');
+        const examTitle = document.getElementById('section-title');
+        const resultContainer = document.getElementById('result-container');
         
-        examData2024.forEach((q, index) => {
-            const card = document.createElement('div');
-            card.className = 'question-card';
+        let currentSection = "2024";
+
+        function renderExam() {
+            container.innerHTML = "";
+            const questions = exams[currentSection];
             
-            // إضافة الصورة إذا وجدت
-            let imageHTML = '';
-            if(q.sectionImage) {
-                imageHTML = `<img src="${q.sectionImage}" alt="شكل توضيحي للسؤال" class="section-image">`;
-            }
+            if(currentSection === 'old') examTitle.innerText = `أسئلة سنوات سابقة (2020-2019)`;
+            else examTitle.innerText = `امتحان ${currentSection}`;
 
-            // إنشاء الأزرار للخيارات
-            let optionsHTML = '';
-            q.options.forEach((opt, optIndex) => {
-                optionsHTML += `<div class="option-btn" onclick="checkAnswer(${index}, ${optIndex}, this)">${opt}</div>`;
+            updateButtons(currentSection);
+
+            questions.forEach((q, index) => {
+                let currentImage = "";
+                if (currentSection === "2024") {
+                    if (q.id >= 71 && q.id <= 85) currentImage = "q71.jpg";
+                    else if (q.id >= 86 && q.id <= 88) currentImage = "q86.jpg";
+                    else if (q.id >= 94 && q.id <= 100) currentImage = "q94.jpg";
+                    else if (q.id >= 101 && q.id <= 108) currentImage = "q101.jpg";
+                } else if (currentSection === "2023") {
+                    if (q.id >= 71 && q.id <= 85) currentImage = "exam2023_q71.jpg";
+                    else if (q.id >= 86 && q.id <= 88) currentImage = "exam2023_q85.jpg";
+                    else if (q.id >= 94 && q.id <= 100) currentImage = "exam2023_q94.jpg";
+                    else if (q.id >= 101 && q.id <= 110) currentImage = "exam2023_q101.jpg";
+                }
+
+                const card = document.createElement('div');
+                card.id = `card_${q.id}`;
+                card.className = `question-card bg-white p-6 rounded-lg shadow mb-6 border-r-4 ${q.type === 'essay' ? 'border-purple-500' : 'border-blue-500'}`;
+                
+                let imageHTML = "";
+                if (currentImage) {
+                    imageHTML = `
+                        <div class="mb-4 text-center">
+                            <img src="${currentImage}" alt="صورة توضيحية للسؤال" onerror="this.onerror=null; this.src='https://placehold.co/600x300?text=أضف+الصورة+هنا+${currentImage}'">
+                        </div>
+                    `;
+                }
+
+                let contentHTML = "";
+                if (q.type === 'mcq') {
+                    const optionsHTML = q.options.map((opt, i) => `
+                        <label class="flex items-center p-3 rounded hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="q_${q.id}" value="${i}" onchange="checkAnswer(${q.id}, this)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span class="mr-3 text-lg">${opt}</span>
+                        </label>
+                    `).join('');
+                    
+                    contentHTML = `
+                        <div class="question-content w-full">
+                            <h3 class="text-xl font-bold mb-4 text-gray-800">${index + 1}. ${q.question}</h3>
+                            <div class="space-y-2">
+                                ${optionsHTML}
+                            </div>
+                        </div>
+                    `;
+                } else if (q.type === 'tf') {
+                    contentHTML = `
+                        <div class="question-content w-full">
+                            <h3 class="text-xl font-bold mb-4 text-gray-800">${index + 1}. ${q.question}</h3>
+                            <div class="flex space-x-6 space-x-reverse mt-2">
+                                <label class="flex items-center p-3 rounded hover:bg-green-50 cursor-pointer border border-gray-200 w-1/3 justify-center">
+                                    <input type="radio" name="q_${q.id}" value="true" onchange="checkAnswer(${q.id}, this)" class="w-5 h-5 text-green-600 focus:ring-green-500">
+                                    <span class="mr-2 font-bold text-green-700">صح (√)</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded hover:bg-red-50 cursor-pointer border border-gray-200 w-1/3 justify-center">
+                                    <input type="radio" name="q_${q.id}" value="false" onchange="checkAnswer(${q.id}, this)" class="w-5 h-5 text-red-600 focus:ring-red-500">
+                                    <span class="mr-2 font-bold text-red-700">خطأ (X)</span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                } else if (q.type === 'essay') {
+                    contentHTML = `
+                        <div class="question-content w-full">
+                            <h3 class="text-xl font-bold mb-4 text-purple-800 flex items-center">
+                                <span class="bg-purple-100 text-purple-600 text-xs px-2 py-1 rounded ml-2">سؤال مقالي</span>
+                                ${index + 1}. ${q.question}
+                            </h3>
+                            <div class="p-4 bg-gray-50 rounded border border-gray-200 text-gray-600 text-sm">
+                                هذا السؤال لا يتم تصحيحه آلياً. حاول الإجابة بنفسك ثم اضغط على زر "إظهار الإجابة" للتأكد.
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const expBtnText = q.type === 'essay' ? 'إظهار الإجابة النموذجية' : 'إظهار التفسير';
+                const explanationHTML = `
+                    <div class="mt-4 pt-4 border-t border-gray-100 w-full clear-both">
+                        <button type="button" onclick="toggleExplanation('exp_${q.id}')" class="text-blue-600 hover:text-blue-800 text-sm font-semibold flex items-center">
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            ${expBtnText}
+                        </button>
+                        <div id="exp_${q.id}" class="explanation-box mt-2 p-3 bg-blue-50 text-blue-800 rounded text-sm border border-blue-200 whitespace-pre-line">
+                            <strong>الإجابة:</strong> ${q.explanation || q.answer}
+                        </div>
+                    </div>
+                `;
+
+                card.innerHTML = imageHTML + contentHTML + explanationHTML;
+                container.appendChild(card);
             });
-
-            card.innerHTML = `
-                ${imageHTML}
-                <div class="question-text">${q.question}</div>
-                <div class="options-grid" id="options-${index}">
-                    ${optionsHTML}
-                </div>
-                <button class="toggle-explain-btn" onclick="toggleExplanation('explain-${index}')">عرض/إخفاء التفسير</button>
-                <div id="explain-${index}" class="explanation-box">
-                    ${q.explanation}
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    function checkAnswer(qIndex, selectedOptIndex, btnElement) {
-        // منع الإجابة مرتين على نفس السؤال
-        if (answeredQuestions.has(qIndex)) return;
-        
-        answeredQuestions.add(qIndex);
-        const question = examData2024[qIndex];
-        const parentGrid = document.getElementById(`options-${qIndex}`);
-        const allOptions = parentGrid.querySelectorAll('.option-btn');
-
-        if (selectedOptIndex === question.correct) {
-            // إجابة صحيحة
-            btnElement.classList.add('correct');
-            currentScore++;
-        } else {
-            // إجابة خاطئة
-            btnElement.classList.add('wrong');
-            // إظهار الإجابة الصحيحة
-            allOptions[question.correct].classList.add('correct');
         }
-    }
 
-    function toggleExplanation(id) {
-        const el = document.getElementById(id);
-        if (el.style.display === 'block') {
-            el.style.display = 'none';
-        } else {
-            el.style.display = 'block';
+        function updateButtons(activeId) {
+            ['2024', '2023', '2022', 'old'].forEach(id => {
+                const btn = document.getElementById(`btn-${id}`);
+                if(btn) {
+                    if (activeId === id) {
+                        btn.className = "px-6 py-2 bg-blue-600 text-white rounded-lg font-bold shadow hover:bg-blue-700 transition";
+                    } else {
+                        btn.className = "px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold shadow hover:bg-gray-300 transition";
+                    }
+                }
+            });
         }
-    }
 
-    function calculateScore() {
-        const modal = document.getElementById('scoreModal');
-        const scoreDisplay = document.getElementById('finalScore');
-        const message = document.getElementById('scoreMessage');
-        const total = examData2024.length;
-
-        scoreDisplay.innerText = `${currentScore} / ${total}`;
-        
-        const percentage = (currentScore / total) * 100;
-        if (percentage >= 90) message.innerText = "ممتاز! مستوى رائع.";
-        else if (percentage >= 75) message.innerText = "جيد جداً.";
-        else if (percentage >= 50) message.innerText = "ناجح، ولكن تحتاج للمراجعة.";
-        else message.innerText = "حاول مرة أخرى، ذاكر التفسيرات جيداً.";
-
-        modal.style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('scoreModal').style.display = 'none';
-    }
-
-    function showExam(examId) {
-        // إخفاء كل الأقسام
-        document.querySelectorAll('.exam-section').forEach(sec => sec.classList.remove('active'));
-        // إظهار القسم المطلوب
-        document.getElementById(examId).classList.add('active');
-        
-        // إذا تم اختيار امتحان 2024، قم بتحميله (لإعادة التعيين إذا أردت)
-        if(examId === 'exam2024') {
-             // يمكنك هنا إعادة تصفير الامتحان لو رغبت
+        function switchSection(section) {
+            currentSection = section;
+            resultDisplay.innerHTML = "";
+            resultDisplay.classList.add('hidden');
+            renderExam();
         }
-    }
 
-    // تشغيل الامتحان عند التحميل
-    window.onload = initExam;
-</script>
+        function checkAnswer(qId, input) {
+            const q = exams[currentSection].find(x => x.id === qId);
+            if(!q) return;
+            
+            const name = input.name;
+            const allInputs = document.querySelectorAll(`input[name="${name}"]`);
+            allInputs.forEach(radio => { radio.disabled = true; radio.parentElement.classList.add('disabled'); });
+            
+            let isCorrect = false;
+            if (q.type === 'tf') { isCorrect = (input.value === 'true') === q.answer; }
+            else { isCorrect = parseInt(input.value) === q.answer; }
+            
+            if (isCorrect) input.parentElement.classList.add('bg-green-100', 'border-green-300');
+            else {
+                input.parentElement.classList.add('bg-red-100', 'border-red-300');
+                allInputs.forEach(radio => {
+                     let val = q.type === 'tf' ? (radio.value === 'true') : parseInt(radio.value);
+                     if(val === q.answer) radio.parentElement.classList.add('bg-green-100', 'border-green-300', 'opacity-75');
+                });
+            }
+            const expBox = document.getElementById(`exp_${qId}`);
+            if(expBox) expBox.style.display = 'block';
+        }
 
+        function toggleExplanation(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === "block" ? "none" : "block";
+        }
+
+        function calculateResult() {
+            let score = 0;
+            const questions = exams[currentSection];
+            const scorable = questions.filter(q => q.type !== 'essay');
+            if(scorable.length === 0) { alert("أسئلة مقالية فقط."); return; }
+            
+            let missed = 0;
+            scorable.forEach(q => {
+                const sel = document.querySelector(`input[name="q_${q.id}"]:checked`);
+                if(sel) {
+                    let val = q.type === 'tf' ? (sel.value === 'true') : parseInt(sel.value);
+                    if(val === q.answer) score++;
+                } else {
+                    missed++;
+                    const card = document.getElementById(`card_${q.id}`);
+                    if(card) card.classList.add('border-red-500', 'border-2');
+                }
+            });
+            const pct = Math.round((score/scorable.length)*100);
+            resultDisplay.innerHTML = `نتيجتك: ${score} من ${scorable.length} (${pct}%)`;
+            resultDisplay.classList.remove('hidden');
+            if(missed > 0) alert(`لم تحل ${missed} سؤال!`);
+        }
+
+        window.onload = function() {
+            renderExam();
+        };
+    </script>
 </body>
 </html>
